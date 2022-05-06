@@ -423,11 +423,29 @@ void gameInstallBoundaries(Game g)
 
 /******************************************************************************
  * gameInstallBlocks - Install the movable blocks
- * INCOMPLETE!
+ * INCOMPLETE! -- ja ta completo
  ******************************************************************************/
 void gameInstallBlocks(Game g)
 {
-    
+    int i = 0;
+    int max = 110;
+   /* int counter = 0;*/
+    while (i <= max){
+        int x = tyRand(WORLD_SIZE_X-2) + 1;
+        int y = tyRand(WORLD_SIZE_Y-2) + 1;
+        if(cellIsEmpty(g,x,y)) {
+            actorNew(g, BLOCK, x, y);
+            /*printf("contador %d\n",counter++);*/
+        }else
+            max++;
+        i++;
+    }
+
+
+
+
+
+
 }
 
 /******************************************************************************
