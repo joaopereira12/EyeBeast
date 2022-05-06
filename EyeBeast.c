@@ -440,30 +440,50 @@ void gameInstallBlocks(Game g)
             max++;
         i++;
     }
-
-
-
-
-
-
 }
 
 /******************************************************************************
  * gameInstallMonsters - Install the monsters
- * INCOMPLETE!
+ * INCOMPLETE! ja ta completoz
  ******************************************************************************/
 void gameInstallMonsters(Game g)
 {
-
+    int i = 0;
+    int max = N_MONSTERS;
+    int countMonsters = 0;
+    while (i <= max){
+        int x = tyRand(WORLD_SIZE_X-2) + 1;
+        int y = tyRand(WORLD_SIZE_Y-2) + 1;
+        if(cellIsEmpty(g,x,y) ) {
+            g->monsters[countMonsters] = actorNew(g, CHASER, x, y);
+            countMonsters++;
+        }else
+            max++;
+        i++;
+    }
 }
 
 /******************************************************************************
  * gameInstallHero - Install the hero
- * INCOMPLETE! This code is to change
+ * INCOMPLETE! This code is to change  ja ta completo
  ******************************************************************************/
 void gameInstallHero(Game g)
 {
-    g->hero = actorNew(g, HERO, 10, 10);
+    int counterMonsters = 0;
+    int x,y;
+    while(counterMonsters < N_MONSTERS){
+        counterMonsters = 0;
+        x = tyRand(WORLD_SIZE_X-2) + 1;
+        y = tyRand(WORLD_SIZE_Y-2) + 1;
+        if(cellIsEmpty(g, x, y)){
+            for(int i = 0; i < N_MONSTERS; i++) {
+                if (tyDistance(g->monsters[i]->x, g->monsters[i]->y, x, y) > 4)
+                    counterMonsters++;
+            }
+        }
+    }
+    g->hero = actorNew(g, HERO, x, y);
+
 }
 
 /******************************************************************************
