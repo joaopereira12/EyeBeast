@@ -368,6 +368,13 @@ Actor actorNew(Game g, ActorKind kind, int x, int y)
 	return a;
 }
 
+bool checkIfMoveIsPossible(Game g, int nx, int ny, int appendX, int appendY){
+    return !(!cellIsEmpty(g,nx+appendX,ny) && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx-appendX,ny) && (g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx,ny+appendY) && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx,ny-appendY) && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ));
+}
+
 /******************************************************************************
  * heroAnimation - The hero moves using the cursor keys
  * INCOMPLETE!
@@ -375,9 +382,30 @@ Actor actorNew(Game g, ActorKind kind, int x, int y)
 void heroAnimation(Game g, Actor a)
 {
 	int dx = tyKeyDeltaX(), dy = tyKeyDeltaY();
+
 	int nx = a->x + dx, ny = a->y + dy;
-	if (cellIsEmpty(g, nx, ny))
-		actorMove(g, a, nx, ny);
+    int  appendX = 0,  appendY =0;
+	if (cellIsEmpty(g, nx, ny)){
+        actorMove(g, a, nx, ny);
+    }else{
+        if(g->world[nx][ny]->kind == BLOCK){
+            int existsBlock = 1;
+            while(existsBlock == 1){
+                if ((dx > 0 && !cellIsEmpty(g,nx+appendX,ny) && g->world[nx + appendX][ny]->kind == BLOCK) //direita
+                    || dx < 0 && !cellIsEmpty(g,nx-appendX,ny) && g->world[nx - appendX][ny]->kind == BLOCK)  //esquerda
+                    appendX = appendX +1;
+                else if((dy > 0 && !cellIsEmpty(g,nx,ny+appendY) && g->world[nx][ny+appendY]->kind == BLOCK) //cima
+                        || dy < 0 &&!cellIsEmpty(g,nx,ny-appendY) && g->world[nx][ny-appendY]->kind == BLOCK) //baixo
+                    appendY = appendY + 1;
+                else //none
+                    existsBlock = 0;
+            }
+            if(checkIfMoveIsPossible(g,nx,ny,appendX,appendY)){
+                    actorMove(g,g->world[nx][ny],dx > 0 ? nx+appendX : dx < 0 ? nx-appendX: nx, dy > 0 ? ny+appendY : dy < 0 ? ny-appendY: ny);
+                    actorMove(g, a, nx, ny);
+            }
+        }
+    }
 }
 
 void chaserAnimation(Game g, Actor a) {
@@ -458,7 +486,10 @@ void gameInstallBoundaries(Game g)
  ******************************************************************************/
 void gameInstallBlocks(Game g)
 {
-	  actorNew(g, BLOCK, 3, 2);
+	  
+  
+
+
 	   
 	
     int i = 0;
@@ -483,7 +514,6 @@ void gameInstallBlocks(Game g)
 void gameInstallMonsters(Game g)
 {
 
-	
 	
     int i = 0;
     int max = N_MONSTERS;
@@ -570,7 +600,7 @@ bool checkDeath(Game g,Actor a) {
 
 bool checkIfIsTrapped(Game g, Actor a) {
 	int counter = 0;
-	int N_CELLS_TO_TRAP = 8;
+	int N_CELLS_TO_TRAP = 9;
 	int actorX = a->x;
 	int actorY = 	a->y;
 	for(int i = -1; i <=1; i++ ) {
@@ -616,7 +646,7 @@ void gameAnimation(Game g) {
 	actorAnimation(g, g->hero);
 	
 	if(monsterCounter%10==0) {
-	for(int i = 0 ; i <= N_MONSTERS ; i++)
+	for(int i = 0 ; i < N_MONSTERS ; i++)
 		actorAnimation(g, g->monsters[i]);	
 	}
 	
