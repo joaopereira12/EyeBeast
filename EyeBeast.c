@@ -16,8 +16,8 @@ tab = 4 spaces
 
 
  AUTHORS IDENTIFICATION
-    Student 1: numero, nome
-    Student 2: numero, nome
+    Student 1: 60180, João Pereira
+    Student 2: 59213, Pedro Grilo
 
 Comments:
 
@@ -42,7 +42,7 @@ Comments:
 
 #define APP_NAME	"Eye Beast"
 
-#define AUTHOR1		"Joao Pereira (XXXXX)"
+#define AUTHOR1		"Joao Pereira (60180)"
 #define AUTHOR2		"Pedro Grilo (59213)"
 
 /******************************************************************************/
@@ -380,14 +380,49 @@ void heroAnimation(Game g, Actor a)
 		actorMove(g, a, nx, ny);
 }
 
+void chaserAnimation(Game g, Actor a) {
+		int whichWay = tyRand(2);
+		int nextX, nextY;
+		if(whichWay == 0)
+			nextX = a->x + tyRand(2);
+		else 
+			nextX = a->x - tyRand(2);
+		whichWay = tyRand(2);
+		if(whichWay == 0)
+			nextY = a->y + tyRand(2);
+		else 
+			nextY = a->y - tyRand(2);
+		
+		if (cellIsEmpty(g, nextX, nextY)) {
+			actorMove(g, a, nextX, nextY);
+			
+		}
+	
+}
+
+
 /******************************************************************************
  * actorAnimation - The actor behaves according to its kind
  * INCOMPLETE!
  ******************************************************************************/
+
+int monsterCounter = 1;
+
 void actorAnimation(Game g, Actor a)
 {
+	
 	switch( a->kind ) {
-		case HERO: heroAnimation(g, a); break;
+		case HERO: heroAnimation(g, a); monsterCounter++;
+		break;
+		case CHASER:
+		
+				chaserAnimation(g,a);
+			
+				break;
+		
+		case BLOCK:
+	
+		break;
 		default: break;
 	}
 }
@@ -435,7 +470,7 @@ void gameInstallBlocks(Game g)
         int y = tyRand(WORLD_SIZE_Y-2) + 1;
         if(cellIsEmpty(g,x,y)) {
             actorNew(g, BLOCK, x, y);
-            /*printf("contador %d\n",counter++);*/
+           /*printf("contador %d\n",tyRand(2));*/
         }else
             max++;
         i++;
@@ -522,10 +557,16 @@ void gameRedraw(Game g)
  * This function is called every tenth of a second (more or less...)
  * INCOMPLETE!
 ******************************************************************************/
+
+
 void gameAnimation(Game g) {
+	
 	actorAnimation(g, g->hero);
-//	for(int i = 0 ; i < N_MONSTERS ; i++)
-//		actorAnimation(g, g->monsters[i]);		
+	
+	if(monsterCounter%10==0) {
+	for(int i = 0 ; i <= N_MONSTERS ; i++)
+		actorAnimation(g, g->monsters[i]);	
+	}
 }
 
 
