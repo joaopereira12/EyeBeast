@@ -486,7 +486,10 @@ void gameInstallBoundaries(Game g)
  ******************************************************************************/
 void gameInstallBlocks(Game g)
 {
-	  actorNew(g, BLOCK, 3, 2);
+	  
+  
+
+
 	   
 	
     int i = 0;
@@ -511,7 +514,6 @@ void gameInstallBlocks(Game g)
 void gameInstallMonsters(Game g)
 {
 
-	
 	
     int i = 0;
     int max = N_MONSTERS;
@@ -598,7 +600,7 @@ bool checkDeath(Game g,Actor a) {
 
 bool checkIfIsTrapped(Game g, Actor a) {
 	int counter = 0;
-	int N_CELLS_TO_TRAP = 8;
+	int N_CELLS_TO_TRAP = 9;
 	int actorX = a->x;
 	int actorY = 	a->y;
 	for(int i = -1; i <=1; i++ ) {
@@ -644,7 +646,7 @@ void gameAnimation(Game g) {
 	actorAnimation(g, g->hero);
 	
 	if(monsterCounter%10==0) {
-	for(int i = 0 ; i <= N_MONSTERS ; i++)
+	for(int i = 0 ; i < N_MONSTERS ; i++)
 		actorAnimation(g, g->monsters[i]);	
 	}
 	
