@@ -83,7 +83,7 @@ typedef char Line[MAX_LINE];
 
 typedef int Image;
 
-static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg;
+static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg,cherryImg, invalidImg;
 
 /* XPM */
 static tyImage empty_xpm = {
@@ -154,6 +154,33 @@ static tyImage chaser_xpm = {
 "................",
 "................"};
 
+
+
+/* XPM */
+static tyImage boundary_xpm = {
+"16 16 3 1",
+"   c None",
+".  c #000000",
+"+  c #FFFFFF",
+"................",
+"................",
+"..............+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"................",
+"..+.+.+.+.+.+.+.",
+"................"};
+
+
+
 /* XPM */
 static tyImage block_xpm = {
 "16 16 3 1",
@@ -178,8 +205,8 @@ static tyImage block_xpm = {
 "................"};
 
 /* XPM */
-static tyImage boundary_xpm = {
-"16 16 3 1",
+static tyImage cherry_xpm = {
+"16 16 2 1",
 "   c None",
 ".  c #000000",
 "+  c #FFFFFF",
@@ -233,6 +260,7 @@ void imagesCreate(void)
 	chaserImg = tyCreateImage(chaser_xpm);
 	blockImg = tyCreateImage(block_xpm);
 	boundaryImg = tyCreateImage(boundary_xpm);
+	cherryImg = tyCreateImage(cherry_xpm);
 	invalidImg = tyCreateImage(invalid_xpm);
 }
 
@@ -251,7 +279,7 @@ void imagesCreate(void)
 #define ACTOR_PIXELS_Y	16
 
 typedef enum {
-	EMPTY, HERO, CHASER, BLOCK, BOUNDARY
+	EMPTY, HERO, CHASER, BLOCK, BOUNDARY, CHERRY
 } ActorKind;
 
 typedef struct {
@@ -269,6 +297,10 @@ typedef struct {
 typedef struct {
 // specific fields can go here, but probably none will be needed
 } Boundary;
+
+typedef struct {
+// specific fields can go here, but probably none will be needed
+} Cherry;
 
 typedef struct {
 // factored common fields
@@ -292,6 +324,7 @@ typedef struct {
 	Actor world[WORLD_SIZE_X][WORLD_SIZE_Y];
 	Actor hero;
 	Actor monsters[N_MONSTERS];
+	Actor cherry;
 } GameStruct, *Game;
 
 /******************************************************************************
@@ -305,6 +338,7 @@ Image actorImage(ActorKind kind)
 		case CHASER:	return chaserImg;
 		case BLOCK:		return blockImg;
 		case BOUNDARY:	return boundaryImg;
+		case CHERRY: 	return cherryImg;
 		default:		return invalidImg;
 	}
 }
@@ -428,6 +462,22 @@ void chaserAnimation(Game g, Actor a) {
 	
 }
 
+void cherryAnimation(Game g, Actor a) {
+		
+		int nextX, nextY;
+		
+			nextX = a->x + tyRand(2);
+		
+			nextY = a->y + tyRand(2);
+		
+		
+		if (cellIsEmpty(g, nextX, nextY)) {
+			actorMove(g, a, nextX, nextY);
+			
+		}
+	
+}
+
 
 /******************************************************************************
  * actorAnimation - The actor behaves according to its kind
@@ -446,6 +496,9 @@ void actorAnimation(Game g, Actor a)
 		break;
 		case CHASER:
 			chaserAnimation(g,a);
+			break;
+		case CHERRY: 
+			cherryAnimation(g,a);
 			break;
 		default: break;
 	}
@@ -639,7 +692,8 @@ void commandWin(void)
 }
 
 void gameAnimation(Game g) {
-	
+	actorAnimation(g,g->cherry);
+
 	if(allTrapped(g))
 		commandWin();
 
