@@ -440,17 +440,13 @@ void actorAnimation(Game g, Actor a)
 {
 	
 	switch( a->kind ) {
-		case HERO: heroAnimation(g, a); monsterCounter++;
+		case HERO:
+			heroAnimation(g, a); 
+			monsterCounter++;
 		break;
 		case CHASER:
-		
-				chaserAnimation(g,a);
-			
-				break;
-		
-		case BLOCK:
-	
-		break;
+			chaserAnimation(g,a);
+			break;
 		default: break;
 	}
 }
@@ -490,9 +486,12 @@ void gameInstallBoundaries(Game g)
  ******************************************************************************/
 void gameInstallBlocks(Game g)
 {
+	  actorNew(g, BLOCK, 3, 2);
+	   
+	
     int i = 0;
     int max = 110;
-   /* int counter = 0;*/
+    int counter = 0;
     while (i <= max){
         int x = tyRand(WORLD_SIZE_X-2) + 1;
         int y = tyRand(WORLD_SIZE_Y-2) + 1;
@@ -511,6 +510,9 @@ void gameInstallBlocks(Game g)
  ******************************************************************************/
 void gameInstallMonsters(Game g)
 {
+
+	
+	
     int i = 0;
     int max = N_MONSTERS;
     int countMonsters = 0;
@@ -585,16 +587,72 @@ void gameRedraw(Game g)
  * This function is called every tenth of a second (more or less...)
  * INCOMPLETE!
 ******************************************************************************/
+bool checkDeath(Game g,Actor a) {
+	for(int i = 0 ; i < N_MONSTERS ; i++) {
+		if(tyDistance(a->x, a->y, g->monsters[i]->x,  g->monsters[i]->y) <= 1)
+			return true;
+	}
+	return false;
+	
+}
 
+bool checkIfIsTrapped(Game g, Actor a) {
+	int counter = 0;
+	int N_CELLS_TO_TRAP = 8;
+	int actorX = a->x;
+	int actorY = 	a->y;
+	for(int i = -1; i <=1; i++ ) {
+		for(int j = -1; j <=1; j++) {
+			if(!cellIsEmpty(g,actorX + i, actorY +j))
+				counter++;
+		}
+	}
+	if(counter == N_CELLS_TO_TRAP) return true;
+	return false;
+
+	
+}
+
+bool allTrapped(Game g) {
+	int counter = 0;
+	for(int i = 0 ; i < N_MONSTERS ; i++) {
+		if(checkIfIsTrapped(g,g->monsters[i]))
+			counter++;
+	}
+	if(counter == N_MONSTERS) 
+		return true;
+	return false;
+}
+
+void commandDeath(void) {
+	tyAlertDialog("You lose!","Dead Meat!!");
+	tyQuit();
+}
+
+
+void commandWin(void)
+{
+	tyAlertDialog("Game Over", "You Won!");
+	tyQuit();
+}
 
 void gameAnimation(Game g) {
 	
+	if(allTrapped(g))
+		commandWin();
+
 	actorAnimation(g, g->hero);
 	
 	if(monsterCounter%10==0) {
 	for(int i = 0 ; i <= N_MONSTERS ; i++)
 		actorAnimation(g, g->monsters[i]);	
 	}
+	
+
+	if(checkDeath( g, g->hero))
+		commandDeath();
+
+	
 }
 
 
@@ -644,6 +702,7 @@ void comandRestart(void)
 {
 	tyHandleStart();
 }
+
 
 void comandFinish(void)
 {
