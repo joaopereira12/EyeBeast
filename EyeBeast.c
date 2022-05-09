@@ -254,6 +254,8 @@ typedef enum {
 	EMPTY, HERO, CHASER, BLOCK, BOUNDARY
 } ActorKind;
 
+
+
 typedef struct {
 // specific fields can go here, but probably none will be needed
 } Hero;
@@ -368,11 +370,26 @@ Actor actorNew(Game g, ActorKind kind, int x, int y)
 	return a;
 }
 
-bool checkIfMoveIsPossible(Game g, int nx, int ny, int appendX, int appendY){
-    return !(!cellIsEmpty(g,nx+appendX,ny) && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) ||
-               !cellIsEmpty(g,nx-appendX,ny) && (g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) ||
-               !cellIsEmpty(g,nx,ny+appendY) && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) ||
-               !cellIsEmpty(g,nx,ny-appendY) && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ));
+bool checkIfMoveIsPossible(Game g, int dx, int dy,int nx, int ny, int appendX, int appendY){
+
+    /*const char* dayNames[] = {"EMPTY", "HERO", "CHASER","BLOCK","BOUNDARY" };
+    //TODO REMOVER ISTO QUANDO FOR PARA ENTREGAR, APENAS PARA TESTES
+/*if((!cellIsEmpty(g,nx+appendX,ny) && dx > 0 &&(g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) )){
+        printf("dir %s\n",dayNames[g->world[nx + appendX][ny]->kind]);
+    }
+    if((!cellIsEmpty(g,nx-appendX,ny) && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) )){
+        printf("esq %s\n",dayNames[g->world[nx - appendX][ny]->kind]);
+    }
+    if((!cellIsEmpty(g,nx,ny+appendY) && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) )){
+        printf("baixo %s\n",dayNames[g->world[nx][ny+appendY]->kind]);
+    }if((!cellIsEmpty(g,nx,ny-appendY) && dy < 0&&(g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ) )){
+        printf("cima %s\n",dayNames[g->world[nx][ny-appendY]->kind]);
+    }/*
+    */
+    return !(!cellIsEmpty(g,nx+appendX,ny)  && dx > 0 && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx-appendX,ny)  && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx,ny+appendY)  && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx,ny-appendY)  && dy < 0 && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ));
 }
 
 /******************************************************************************
@@ -400,7 +417,7 @@ void heroAnimation(Game g, Actor a)
                 else //none
                     existsBlock = 0;
             }
-            if(checkIfMoveIsPossible(g,nx,ny,appendX,appendY)){
+            if(checkIfMoveIsPossible(g,dx,dy,nx,ny,appendX,appendY)){
                     actorMove(g,g->world[nx][ny],dx > 0 ? nx+appendX : dx < 0 ? nx-appendX: nx, dy > 0 ? ny+appendY : dy < 0 ? ny-appendY: ny);
                     actorMove(g, a, nx, ny);
             }
