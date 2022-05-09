@@ -458,6 +458,7 @@ typedef struct {
 	Actor hero;
 	Actor monsters[N_MONSTERS];
     char* lastScenario;
+    int monsterCounter;
 } GameStruct, *Game;
 
 /******************************************************************************
@@ -571,12 +572,17 @@ void heroAnimation(Game g, Actor a)
         actorMove(g, a, nx, ny);
     }else{
         if(g->world[nx][ny]->kind == CHERRY) {
-            char * sc = randomScenarios[tyRand(4)];
-            if(g->lastScenario == NULL)
-                g->lastScenario == sc;
+            char * sc;
 
-               //TODO fazer para nao repetir os mm eventos de seguida!
-            printf("CHEERY: %s\n",sc);
+            do{
+                sc  = randomScenarios[tyRand(4)];
+                //verificar para nao haver dois eventos de seguida iguais
+            }while(strcmp(sc,g->lastScenario) == 0);
+
+            strcpy(g->lastScenario,sc);
+
+
+            printf("CHEERY: %s\n",g->lastScenario);
         }
         if(g->world[nx][ny]->kind == BLOCK){
             int existsBlock = 1;
@@ -625,15 +631,15 @@ void chaserAnimation(Game g, Actor a) {
  * INCOMPLETE!
  ******************************************************************************/
 
-int monsterCounter = 1;
 
 void actorAnimation(Game g, Actor a)
 {
 	
 	switch( a->kind ) {
 		case HERO:
-			heroAnimation(g, a); 
-			monsterCounter++;
+			heroAnimation(g, a);
+            g->monsterCounter = g->monsterCounter+1;
+
 		break;
 		case CHASER:
 			chaserAnimation(g,a);
@@ -834,7 +840,7 @@ void gameAnimation(Game g) {
 	actorAnimation(g, g->hero);
 
 	
-	if(monsterCounter%10==0) {
+	if(g->monsterCounter%10==0) {
 	for(int i = 0 ; i < N_MONSTERS ; i++)
 		actorAnimation(g, g->monsters[i]);	
 	}
