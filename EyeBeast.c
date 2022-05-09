@@ -457,8 +457,11 @@ typedef struct {
 	Actor world[WORLD_SIZE_X][WORLD_SIZE_Y];
 	Actor hero;
 	Actor monsters[N_MONSTERS];
+    Actor cherry;
     char* lastScenario;
     int monsterCounter;
+    bool cherryPlaced;
+    int cherryTimeCatched;
 } GameStruct, *Game;
 
 /******************************************************************************
@@ -558,6 +561,25 @@ bool checkIfMoveIsPossible(Game g, int dx, int dy,int nx, int ny, int appendX, i
                !cellIsEmpty(g,nx,ny-appendY)  && dy < 0 && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ));
 }
 
+void cherryAnimation(Game g, Actor a) {
+    int whichWay = tyRand(2);
+    int nextX, nextY;
+    if(whichWay == 0)
+        nextX = a->x + tyRand(2);
+    else
+        nextX = a->x - tyRand(2);
+    whichWay = tyRand(2);
+    if(whichWay == 1)
+        nextY = a->y + tyRand(2);
+    else
+        nextY = a->y - tyRand(2);
+
+    if (cellIsEmpty(g, nextX, nextY)) {
+        actorMove(g, a, nextX, nextY);
+
+    }
+}
+
 /******************************************************************************
  * heroAnimation - The hero moves using the cursor keys
  * INCOMPLETE!
@@ -572,17 +594,11 @@ void heroAnimation(Game g, Actor a)
         actorMove(g, a, nx, ny);
     }else{
         if(g->world[nx][ny]->kind == CHERRY) {
-            char * sc;
-
-            do{
-                sc  = randomScenarios[tyRand(4)];
-                //verificar para nao haver dois eventos de seguida iguais
-            }while(strcmp(sc,g->lastScenario) == 0);
-
-            strcpy(g->lastScenario,sc);
-
-
-            printf("CHEERY: %s\n",g->lastScenario);
+            char * sc = randomScenarios[tyRand(4)];
+            printf("CHEERY: %s\n",sc);
+            g->cherryPlaced = false;
+            g->cherryTimeCatched = tySeconds();
+            g->cherry = NULL;
         }
         if(g->world[nx][ny]->kind == BLOCK){
             int existsBlock = 1;
@@ -620,7 +636,7 @@ void chaserAnimation(Game g, Actor a) {
 		
 		if (cellIsEmpty(g, nextX, nextY)) {
 			actorMove(g, a, nextX, nextY);
-			
+
 		}
 	
 }
@@ -644,6 +660,9 @@ void actorAnimation(Game g, Actor a)
 		case CHASER:
 			chaserAnimation(g,a);
 			break;
+        case CHERRY:
+            cherryAnimation(g,a);
+            break;
 		default: break;
 	}
 }
@@ -683,6 +702,7 @@ void gameInstallBoundaries(Game g)
  ******************************************************************************/
 void gameInstallBlocks(Game g)
 {
+    g->cherryTimeCatched = tySeconds();
     int i = 0;
     int max = 110;
     int counter = 0;
@@ -691,14 +711,13 @@ void gameInstallBlocks(Game g)
         int y = tyRand(WORLD_SIZE_Y-2) + 1;
         if(cellIsEmpty(g,x,y)) {
             actorNew(g, BLOCK, x, y);
-            if(x%2 && y%2 && cellIsEmpty(g,x+1,y+1)) {
-                actorNew(g, CHERRY, x+1, y+1);
-            }
             /*printf("contador %d\n",tyRand(2));*/
         }else
             max++;
         i++;
     }
+
+
 }
 
 /******************************************************************************
@@ -708,11 +727,10 @@ void gameInstallBlocks(Game g)
 void gameInstallMonsters(Game g)
 {
 
-	
     int i = 0;
     int max = N_MONSTERS;
     int countMonsters = 0;
-    while (i <= max){
+    while (i < max){
         int x = tyRand(WORLD_SIZE_X-2) + 1;
         int y = tyRand(WORLD_SIZE_Y-2) + 1;
         if(cellIsEmpty(g,x,y) ) {
@@ -724,6 +742,17 @@ void gameInstallMonsters(Game g)
     }
 }
 
+
+void gameInstallCherry(Game g){
+    int x;
+    int y;
+    do{
+        x = tyRand(WORLD_SIZE_X-2) + 1;
+        y = tyRand(WORLD_SIZE_Y-2) + 1;
+    }while(!cellIsEmpty(g,x,y));
+    g->cherry=actorNew(g, CHERRY, x, y);
+
+}
 /******************************************************************************
  * gameInstallHero - Install the hero
  * INCOMPLETE! This code is to change  ja ta completo
@@ -760,6 +789,8 @@ Game gameInit(Game g)
     gameInstallBlocks(g);
     gameInstallMonsters(g);
 	gameInstallHero(g);
+
+
 	return g;
 }
 
@@ -833,21 +864,29 @@ void commandWin(void)
 }
 
 void gameAnimation(Game g) {
-	
+
 	if(allTrapped(g))
 		commandWin();
 
+    if(tySeconds() > g->cherryTimeCatched+5 && !g->cherryPlaced){
+        gameInstallCherry(g);
+        g->cherryPlaced = true;
+    }
+
 	actorAnimation(g, g->hero);
 
-	
+    if(g->cherry != NULL)
+        actorAnimation(g, g->cherry);
+
 	if(g->monsterCounter%10==0) {
 	for(int i = 0 ; i < N_MONSTERS ; i++)
 		actorAnimation(g, g->monsters[i]);	
 	}
+
+    if(checkDeath(g, g->hero))
+        commandDeath();
 	
 
-	if(checkDeath( g, g->hero))
-		commandDeath();
 
 	
 }
