@@ -83,7 +83,8 @@ typedef char Line[MAX_LINE];
 
 typedef int Image;
 
-static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg,cherryImg, invalidImg;
+static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg, cherryImg;
+const char* randomScenarios[4]= {"1 MORE LIFE", "KILL 1 ENEMY", "ADDED 1 MORE ENEMY","ENEMIES FAST", "ADDED 1 BULLET" };
 
 /* XPM */
 static tyImage empty_xpm = {
@@ -154,33 +155,6 @@ static tyImage chaser_xpm = {
 "................",
 "................"};
 
-
-
-/* XPM */
-static tyImage boundary_xpm = {
-"16 16 3 1",
-"   c None",
-".  c #000000",
-"+  c #FFFFFF",
-"................",
-"................",
-"..............+.",
-"....+.+.+.+.+...",
-"...+.+.+.+.+..+.",
-"....+.+.+.+.+...",
-"...+.+.+.+.+..+.",
-"....+.+.+.+.+...",
-"...+.+.+.+.+..+.",
-"....+.+.+.+.+...",
-"...+.+.+.+.+..+.",
-"....+.+.+.+.+...",
-"...+.+.+.+.+..+.",
-"................",
-"..+.+.+.+.+.+.+.",
-"................"};
-
-
-
 /* XPM */
 static tyImage block_xpm = {
 "16 16 3 1",
@@ -204,9 +178,166 @@ static tyImage block_xpm = {
 "..+.+.+.+.+.+.+.",
 "................"};
 
+static tyImage cherry_xpm={
+        "16 16 138 2",
+        "  	c None",
+        ". 	c #FFFFFF",
+        "+ 	c #D7D8D7",
+        "@ 	c #828682",
+        "# 	c #656E65",
+        "$ 	c #656D65",
+        "% 	c #777C77",
+        "& 	c #CDCECD",
+        "* 	c #CFCFCE",
+        "= 	c #878885",
+        "- 	c #72796F",
+        "; 	c #A0A2A0",
+        "> 	c #D4D4D4",
+        ", 	c #516A51",
+        "' 	c #008A00",
+        ") 	c #008500",
+        "! 	c #005E00",
+        "~ 	c #004100",
+        "{ 	c #0D200D",
+        "] 	c #3B4338",
+        "^ 	c #586A4F",
+        "/ 	c #4D8419",
+        "( 	c #939492",
+        "_ 	c #F7F7F7",
+        ": 	c #687168",
+        "< 	c #008600",
+        "[ 	c #004800",
+        "} 	c #006A00",
+        "| 	c #1C5D1C",
+        "1 	c #A1A2A0",
+        "2 	c #6B6E69",
+        "3 	c #6B7467",
+        "4 	c #F6F6F6",
+        "5 	c #ADAEAD",
+        "6 	c #007B00",
+        "7 	c #007500",
+        "8 	c #008100",
+        "9 	c #5F665F",
+        "0 	c #C0C0C0",
+        "a 	c #436C22",
+        "b 	c #B8B9B8",
+        "c 	c #939493",
+        "d 	c #2E702E",
+        "e 	c #425242",
+        "f 	c #EBEBEB",
+        "g 	c #7F827D",
+        "h 	c #6D7668",
+        "i 	c #F9F9F9",
+        "j 	c #FEFEFE",
+        "k 	c #D2D2D2",
+        "l 	c #686A68",
+        "m 	c #596358",
+        "n 	c #6E776E",
+        "o 	c #7A7F7A",
+        "p 	c #EFEFEF",
+        "q 	c #F4F4F4",
+        "r 	c #5D6D54",
+        "s 	c #9C9E9C",
+        "t 	c #FDFDFD",
+        "u 	c #CCCBCB",
+        "v 	c #9F9A9A",
+        "w 	c #494945",
+        "x 	c #7A7C78",
+        "y 	c #D3D3D3",
+        "z 	c #395425",
+        "A 	c #D7D7D7",
+        "B 	c #817A7B",
+        "C 	c #B84D5C",
+        "D 	c #ED8B99",
+        "E 	c #DE2F49",
+        "F 	c #823A42",
+        "G 	c #ABA4A4",
+        "H 	c #B0B1B0",
+        "I 	c #57674F",
+        "J 	c #F2F2F2",
+        "K 	c #948F8F",
+        "L 	c #E07080",
+        "M 	c #F28393",
+        "N 	c #F03A54",
+        "O 	c #EF314C",
+        "P 	c #EE304C",
+        "Q 	c #852937",
+        "R 	c #CFCDCD",
+        "S 	c #A3A0A0",
+        "T 	c #766868",
+        "U 	c #645251",
+        "V 	c #807273",
+        "W 	c #DAD9D9",
+        "X 	c #856062",
+        "Y 	c #F1697C",
+        "Z 	c #CA2340",
+        "` 	c #514647",
+        " .	c #D76878",
+        "..	c #F29DA9",
+        "+.	c #F05A6F",
+        "@.	c #E82F49",
+        "#.	c #71363D",
+        "$.	c #D1CFCF",
+        "%.	c #994F55",
+        "&.	c #F05167",
+        "*.	c #ED304B",
+        "=.	c #712C35",
+        "-.	c #CD5B6A",
+        ";.	c #F17B8C",
+        ">.	c #E22B48",
+        ",.	c #695153",
+        "'.	c #FBFBFB",
+        ").	c #806567",
+        "!.	c #684044",
+        "~.	c #F04E65",
+        "{.	c #EE314B",
+        "].	c #722C35",
+        "^.	c #F3F3F3",
+        "/.	c #A7A4A4",
+        "(.	c #C93044",
+        "_.	c #E02A47",
+        ":.	c #634043",
+        "<.	c #F0455D",
+        "[.	c #FCFCFC",
+        "}.	c #9D999A",
+        "|.	c #8D575B",
+        "1.	c #BE273C",
+        "2.	c #A5303F",
+        "3.	c #684B4E",
+        "4.	c #878485",
+        "5.	c #CC3145",
+        "6.	c #E12B48",
+        "7.	c #685153",
+        "8.	c #CAC9C9",
+        "9.	c #D4D3D3",
+        "0.	c #FAFAFA",
+        "a.	c #837B7C",
+        "b.	c #D52C44",
+        "c.	c #E72E49",
+        "d.	c #6F363C",
+        "e.	c #827273",
+        "f.	c #7F6668",
+        "g.	c #DEDDDD",
+        ". . . . . + @ # $ % & * = - ; . ",
+        ". . . . > , ' ) ! ~ { ] ^ / ( . ",
+        ". . . _ : < [ ~ } < | 1 2 3 4 . ",
+        ". . . 5 6 7 7 ' ' 8 9 0 a b . . ",
+        ". . . c d ' ' ' 8 e f g h i . . ",
+        ". . . j k l m n o p q r s . . . ",
+        ". . t u v w x j . . y z A . . . ",
+        ". 4 B C D E F G . . H I J . . . ",
+        ". K L M N O P Q R S T U V W . . ",
+        "_ X Y O O O O Z `  ...+.@.#.$.. ",
+        "f %.&.O O O *.=.-.;.O O O >.,.. ",
+        "'.).O O O O >.!.~.O O O O {.].^.",
+        ". /.(.O O O _.:.<.O O O O P ].J ",
+        ". [.}.|.1.2.3.4.5.O O O O 6.7.. ",
+        ". . . p 8.9.0.'.a.b.O O c.d.9.. ",
+        ". . . . . . . . i /.e.f.V g.. . "};
+
 /* XPM */
-static tyImage cherry_xpm = {
-"16 16 2 1",
+static tyImage boundary_xpm = {
+"16 16 3 1",
 "   c None",
 ".  c #000000",
 "+  c #FFFFFF",
@@ -260,7 +391,7 @@ void imagesCreate(void)
 	chaserImg = tyCreateImage(chaser_xpm);
 	blockImg = tyCreateImage(block_xpm);
 	boundaryImg = tyCreateImage(boundary_xpm);
-	cherryImg = tyCreateImage(cherry_xpm);
+    cherryImg = tyCreateImage(cherry_xpm);
 	invalidImg = tyCreateImage(invalid_xpm);
 }
 
@@ -279,8 +410,10 @@ void imagesCreate(void)
 #define ACTOR_PIXELS_Y	16
 
 typedef enum {
-	EMPTY, HERO, CHASER, BLOCK, BOUNDARY, CHERRY
+	EMPTY, HERO, CHASER, BLOCK, BOUNDARY,CHERRY
 } ActorKind;
+
+
 
 typedef struct {
 // specific fields can go here, but probably none will be needed
@@ -297,7 +430,6 @@ typedef struct {
 typedef struct {
 // specific fields can go here, but probably none will be needed
 } Boundary;
-
 typedef struct {
 // specific fields can go here, but probably none will be needed
 } Cherry;
@@ -313,6 +445,7 @@ typedef struct {
         Chaser chaser;
         Block block;
         Boundary boundary;
+        Cherry cherry;
     } u;
 } ActorStruct, *Actor;
 
@@ -320,11 +453,18 @@ typedef struct {
 #define WORLD_SIZE_Y	18
 #define N_MONSTERS		5
 
+int monsterCounter = 1;
+int cherryCounter = 1;
+
+bool cherryPlaced = false;
+
 typedef struct {
+    int numberOfMonsters;
 	Actor world[WORLD_SIZE_X][WORLD_SIZE_Y];
 	Actor hero;
 	Actor monsters[N_MONSTERS];
-	Actor cherry;
+    Actor cherry;
+    char* lastScenario;
 } GameStruct, *Game;
 
 /******************************************************************************
@@ -338,7 +478,7 @@ Image actorImage(ActorKind kind)
 		case CHASER:	return chaserImg;
 		case BLOCK:		return blockImg;
 		case BOUNDARY:	return boundaryImg;
-		case CHERRY: 	return cherryImg;
+        case CHERRY:	return cherryImg;
 		default:		return invalidImg;
 	}
 }
@@ -402,11 +542,26 @@ Actor actorNew(Game g, ActorKind kind, int x, int y)
 	return a;
 }
 
-bool checkIfMoveIsPossible(Game g, int nx, int ny, int appendX, int appendY){
-    return !(!cellIsEmpty(g,nx+appendX,ny) && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) ||
-               !cellIsEmpty(g,nx-appendX,ny) && (g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) ||
-               !cellIsEmpty(g,nx,ny+appendY) && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) ||
-               !cellIsEmpty(g,nx,ny-appendY) && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ));
+bool checkIfMoveIsPossible(Game g, int dx, int dy,int nx, int ny, int appendX, int appendY){
+
+    /*const char* dayNames[] = {"EMPTY", "HERO", "CHASER","BLOCK","BOUNDARY" };
+    //TODO REMOVER ISTO QUANDO FOR PARA ENTREGAR, APENAS PARA TESTES
+/*if((!cellIsEmpty(g,nx+appendX,ny) && dx > 0 &&(g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) )){
+        printf("dir %s\n",dayNames[g->world[nx + appendX][ny]->kind]);
+    }
+    if((!cellIsEmpty(g,nx-appendX,ny) && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) )){
+        printf("esq %s\n",dayNames[g->world[nx - appendX][ny]->kind]);
+    }
+    if((!cellIsEmpty(g,nx,ny+appendY) && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) )){
+        printf("baixo %s\n",dayNames[g->world[nx][ny+appendY]->kind]);
+    }if((!cellIsEmpty(g,nx,ny-appendY) && dy < 0&&(g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ) )){
+        printf("cima %s\n",dayNames[g->world[nx][ny-appendY]->kind]);
+    }/*
+    */
+    return !(!cellIsEmpty(g,nx+appendX,ny)  && dx > 0 && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx-appendX,ny)  && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx,ny+appendY)  && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx,ny-appendY)  && dy < 0 && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ));
 }
 
 /******************************************************************************
@@ -422,6 +577,17 @@ void heroAnimation(Game g, Actor a)
 	if (cellIsEmpty(g, nx, ny)){
         actorMove(g, a, nx, ny);
     }else{
+        if(g->world[nx][ny]->kind == CHERRY) {
+            cherryPlaced = false;
+            executeCherryOptions(g,tyRand(2));
+            // if(g->lastScenario == NULL) 
+            //     g->lastScenario == sc;
+            
+            
+            
+            //    //TODO fazer para nao repetir os mm eventos de seguida!
+            // printf("CHEERY: %s\n",sc);
+        }
         if(g->world[nx][ny]->kind == BLOCK){
             int existsBlock = 1;
             while(existsBlock == 1){
@@ -434,10 +600,11 @@ void heroAnimation(Game g, Actor a)
                 else //none
                     existsBlock = 0;
             }
-            if(checkIfMoveIsPossible(g,nx,ny,appendX,appendY)){
-                    actorMove(g,g->world[nx][ny],dx > 0 ? nx+appendX : dx < 0 ? nx-appendX: nx, dy > 0 ? ny+appendY : dy < 0 ? ny-appendY: ny);
-                    actorMove(g, a, nx, ny);
-            }
+
+        }
+        if(checkIfMoveIsPossible(g,dx,dy,nx,ny,appendX,appendY)){
+            actorMove(g,g->world[nx][ny],dx > 0 ? nx+appendX : dx < 0 ? nx-appendX: nx, dy > 0 ? ny+appendY : dy < 0 ? ny-appendY: ny);
+            actorMove(g, a, nx, ny);
         }
     }
 }
@@ -450,7 +617,7 @@ void chaserAnimation(Game g, Actor a) {
 		else 
 			nextX = a->x - tyRand(2);
 		whichWay = tyRand(2);
-		if(whichWay == 0)
+		if(whichWay == 1)
 			nextY = a->y + tyRand(2);
 		else 
 			nextY = a->y - tyRand(2);
@@ -463,19 +630,56 @@ void chaserAnimation(Game g, Actor a) {
 }
 
 void cherryAnimation(Game g, Actor a) {
-		
+    int whichWay = tyRand(2);
 		int nextX, nextY;
-		
+		if(whichWay == 0)
 			nextX = a->x + tyRand(2);
-		
+		else 
+			nextX = a->x - tyRand(2);
+		whichWay = tyRand(2);
+		if(whichWay == 1)
 			nextY = a->y + tyRand(2);
-		
+		else 
+			nextY = a->y - tyRand(2);
 		
 		if (cellIsEmpty(g, nextX, nextY)) {
 			actorMove(g, a, nextX, nextY);
 			
 		}
-	
+}
+
+void killMonster(Game g) {
+    int n = tyRand(g->numberOfMonsters);
+    Actor toKill = g->monsters[n];
+    actorHide(g,toKill);
+    for(int i = g->numberOfMonsters -1; i >=n; i--) {
+        g->monsters[i-1] = g->monsters[i];
+    }
+    g->numberOfMonsters--;
+
+}
+
+void addMonster(Game g) {
+    int x, y;
+    do {
+        x = tyRand(WORLD_SIZE_X-2) + 1;
+        y = tyRand(WORLD_SIZE_Y-2) + 1;
+    } while (!cellIsEmpty(g,x,y));
+    g->monsters[g->numberOfMonsters++] = actorNew(g, CHASER, x, y);
+}
+
+
+void executeCherryOptions(Game g, int n) {
+  switch(n) {
+      case 0:
+        killMonster(g);
+      break;
+      case 1:
+        addMonster(g);
+      break;
+
+      default:break;
+  }
 }
 
 
@@ -484,7 +688,7 @@ void cherryAnimation(Game g, Actor a) {
  * INCOMPLETE!
  ******************************************************************************/
 
-int monsterCounter = 1;
+
 
 void actorAnimation(Game g, Actor a)
 {
@@ -497,9 +701,9 @@ void actorAnimation(Game g, Actor a)
 		case CHASER:
 			chaserAnimation(g,a);
 			break;
-		case CHERRY: 
-			cherryAnimation(g,a);
-			break;
+        case CHERRY:
+            cherryAnimation(g,a);
+            break;
 		default: break;
 	}
 }
@@ -539,12 +743,6 @@ void gameInstallBoundaries(Game g)
  ******************************************************************************/
 void gameInstallBlocks(Game g)
 {
-	  
-  
-
-
-	   
-	
     int i = 0;
     int max = 110;
     int counter = 0;
@@ -553,7 +751,10 @@ void gameInstallBlocks(Game g)
         int y = tyRand(WORLD_SIZE_Y-2) + 1;
         if(cellIsEmpty(g,x,y)) {
             actorNew(g, BLOCK, x, y);
-           /*printf("contador %d\n",tyRand(2));*/
+            // if(x%2 && y%2 && cellIsEmpty(g,x+1,y+1)) {
+            //     actorNew(g, CHERRY, x+1, y+1);
+            // }
+            /*printf("contador %d\n",tyRand(2));*/
         }else
             max++;
         i++;
@@ -569,9 +770,9 @@ void gameInstallMonsters(Game g)
 
 	
     int i = 0;
-    int max = N_MONSTERS;
+    int max = g->numberOfMonsters;
     int countMonsters = 0;
-    while (i <= max){
+    while (i < max){
         int x = tyRand(WORLD_SIZE_X-2) + 1;
         int y = tyRand(WORLD_SIZE_Y-2) + 1;
         if(cellIsEmpty(g,x,y) ) {
@@ -591,18 +792,35 @@ void gameInstallHero(Game g)
 {
     int counterMonsters = 0;
     int x,y;
-    while(counterMonsters < N_MONSTERS){
+    while(counterMonsters < g->numberOfMonsters){
         counterMonsters = 0;
         x = tyRand(WORLD_SIZE_X-2) + 1;
         y = tyRand(WORLD_SIZE_Y-2) + 1;
         if(cellIsEmpty(g, x, y)){
-            for(int i = 0; i < N_MONSTERS; i++) {
+            for(int i = 0; i < g->numberOfMonsters; i++) {
                 if (tyDistance(g->monsters[i]->x, g->monsters[i]->y, x, y) > 4)
                     counterMonsters++;
             }
         }
     }
     g->hero = actorNew(g, HERO, x, y);
+
+}
+
+void gameInstallCherry(Game g) {
+    
+    int x,y;
+    
+    
+        while(!(cellIsEmpty(g, x, y))){
+        
+            x = tyRand(WORLD_SIZE_X-2) + 1;
+            y = tyRand(WORLD_SIZE_X-2) + 1;
+            
+        }
+
+        g->cherry=actorNew(g,CHERRY,x,y); 
+        printf("cherry installed");   
 
 }
 
@@ -614,6 +832,7 @@ Game gameInit(Game g)
 	if (g == NULL)
 		g = malloc(sizeof(GameStruct));
 	imagesCreate();
+    g->numberOfMonsters = 5;
     gameClearWorld(g);
     gameInstallBoundaries(g);
     gameInstallBlocks(g);
@@ -643,7 +862,7 @@ void gameRedraw(Game g)
  * INCOMPLETE!
 ******************************************************************************/
 bool checkDeath(Game g,Actor a) {
-	for(int i = 0 ; i < N_MONSTERS ; i++) {
+	for(int i = 0 ; i < g->numberOfMonsters ; i++) {
 		if(tyDistance(a->x, a->y, g->monsters[i]->x,  g->monsters[i]->y) <= 1)
 			return true;
 	}
@@ -670,13 +889,19 @@ bool checkIfIsTrapped(Game g, Actor a) {
 
 bool allTrapped(Game g) {
 	int counter = 0;
-	for(int i = 0 ; i < N_MONSTERS ; i++) {
+	for(int i = 0 ; i < g->numberOfMonsters ; i++) {
 		if(checkIfIsTrapped(g,g->monsters[i]))
 			counter++;
 	}
-	if(counter == N_MONSTERS) 
+	if(counter == g->numberOfMonsters) 
 		return true;
 	return false;
+}
+
+bool checkWin(Game g) {
+    if(allTrapped(g) || g->numberOfMonsters == 0)
+        return true;
+    return false;
 }
 
 void commandDeath(void) {
@@ -692,15 +917,26 @@ void commandWin(void)
 }
 
 void gameAnimation(Game g) {
-	actorAnimation(g,g->cherry);
-
+	
 	if(allTrapped(g))
 		commandWin();
 
+    if(!cherryPlaced) {
+        gameInstallCherry(g);
+        cherryPlaced = true;
+    }
+
+    // if(cherryPlaced) {
+    //     actorAnimation(g,g->cherry);
+    // }
+
+
 	actorAnimation(g, g->hero);
+
+
 	
 	if(monsterCounter%10==0) {
-	for(int i = 0 ; i < N_MONSTERS ; i++)
+	for(int i = 0 ; i < g->numberOfMonsters ; i++)
 		actorAnimation(g, g->monsters[i]);	
 	}
 	
