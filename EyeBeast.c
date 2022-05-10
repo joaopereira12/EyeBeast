@@ -610,22 +610,32 @@ void heroAnimation(Game g, Actor a)
 }
 
 void chaserAnimation(Game g, Actor a) {
-		int whichWay = tyRand(2);
-		int nextX, nextY;
-		if(whichWay == 0)
-			nextX = a->x + tyRand(2);
-		else 
-			nextX = a->x - tyRand(2);
-		whichWay = tyRand(2);
-		if(whichWay == 0)
-			nextY = a->y + tyRand(2);
-		else 
-			nextY = a->y - tyRand(2);
-		
-		if (cellIsEmpty(g, nextX, nextY)) {
-			actorMove(g, a, nextX, nextY);
 
-		}
+        int xHero = g->hero->x;
+        int yHero = g->hero->y;
+
+        int getDistance = tyDistance(xHero,yHero, a->x, a->y);
+        
+        if(tyDistance(xHero, yHero, a->x, a->y+1) < getDistance && cellIsEmpty(g,a->x,a->y+1)){
+            actorMove(g,a,a->x, a->y+1);
+        }else if(tyDistance(xHero, yHero, a->x+1, a->y) < getDistance && cellIsEmpty(g,a->x+1,a->y)){
+            actorMove(g,a,a->x+1, a->y);
+        }else if(tyDistance(xHero, yHero, a->x+1, a->y+1) < getDistance && cellIsEmpty(g,a->x+1,a->y+1)){
+            actorMove(g,a,a->x+1, a->y+1);
+        }else   if(tyDistance(xHero, yHero, a->x, a->y-1) < getDistance && cellIsEmpty(g,a->x,a->y-1)){
+            actorMove(g,a,a->x, a->y-1);
+        }else if(tyDistance(xHero, yHero, a->x-1, a->y) < getDistance && cellIsEmpty(g,a->x-1,a->y)){
+            actorMove(g,a,a->x-1, a->y);
+        }else if(tyDistance(xHero, yHero, a->x-1, a->y-1) < getDistance && cellIsEmpty(g,a->x-1,a->y-1)) {
+            actorMove(g, a, a->x - 1, a->y - 1);
+        }else{
+            int randX = a->x+tyRand(2);
+            int randY = a->y+tyRand(2);
+            if(cellIsEmpty(g,randX,randY))
+            actorMove(g,a,randX, randY);
+        }
+
+
 	
 }
 
