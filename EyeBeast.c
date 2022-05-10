@@ -456,6 +456,7 @@ typedef struct {
 
 int numberOfMonsters = 5;
 
+
 typedef struct {
 	Actor world[WORLD_SIZE_X][WORLD_SIZE_Y];
 	Actor hero;
@@ -465,6 +466,7 @@ typedef struct {
     int monsterCounter;
     bool cherryPlaced;
     int cherryTimeCatched;
+    int heroLifes;
     
 } GameStruct, *Game;
 
@@ -598,8 +600,8 @@ void heroAnimation(Game g, Actor a)
         actorMove(g, a, nx, ny);
     }else{
         if(g->world[nx][ny]->kind == CHERRY) {
-            int n = tyRand(2);
-            executeCherryOptions(g,n);
+            int n = tyRand(3);
+            executeCherryOptions(g,2);
             printf("CHEERY: %s\n",randomScenarios[n]);
             g->cherryPlaced = false;
             g->cherryTimeCatched = tySeconds();
@@ -626,24 +628,40 @@ void heroAnimation(Game g, Actor a)
     }
 }
 
-void chaserAnimation(Game g, Actor a) {
-		int whichWay = tyRand(2);
-		int nextX, nextY;
-		if(whichWay == 0)
-			nextX = a->x + tyRand(2);
-		else 
-			nextX = a->x - tyRand(2);
-		whichWay = tyRand(2);
-		if(whichWay == 0)
-			nextY = a->y + tyRand(2);
-		else 
-			nextY = a->y - tyRand(2);
-		
-		if (cellIsEmpty(g, nextX, nextY)) {
-			actorMove(g, a, nextX, nextY);
+bool heroInCell(int x, int y, Actor a) {
+    if((y==a->y) && x==a->x)
+        return true;
+    return false;
+}
 
-		}
-	
+bool chaserCanMove(Game g, int x, int y) {
+    return cellIsEmpty(g,x,y) || heroInCell(x,y,g->hero);
+}
+
+void chaserAnimation(Game g, Actor a) {
+		int xHero = g->hero->x;
+    int yHero = g->hero->y;
+
+    int getDistance = tyDistance(xHero,yHero, a->x, a->y);
+
+    if(tyDistance(xHero, yHero, a->x, a->y+1) < getDistance && chaserCanMove(g,a->x,a->y+1)){
+        actorMove(g,a,a->x, a->y+1);
+    }else if(tyDistance(xHero, yHero, a->x+1, a->y) < getDistance && chaserCanMove(g,a->x+1,a->y)){
+        actorMove(g,a,a->x+1, a->y);
+    }else if(tyDistance(xHero, yHero, a->x+1, a->y+1) < getDistance && chaserCanMove(g,a->x+1,a->y+1)){
+        actorMove(g,a,a->x+1, a->y+1);
+    }else   if(tyDistance(xHero, yHero, a->x, a->y-1) < getDistance && chaserCanMove(g,a->x,a->y-1)){
+        actorMove(g,a,a->x, a->y-1);
+    }else if(tyDistance(xHero, yHero, a->x-1, a->y) < getDistance && chaserCanMove(g,a->x-1,a->y)){
+        actorMove(g,a,a->x-1, a->y);
+    }else if(tyDistance(xHero, yHero, a->x-1, a->y-1) < getDistance && chaserCanMove(g,a->x-1,a->y-1)) {
+        actorMove(g, a, a->x - 1, a->y - 1);
+    }else{
+        int randX = a->x+tyRand(2);
+        int randY = a->y+tyRand(2);
+        if(chaserCanMove(g,randX,randY) )
+            actorMove(g,a,randX, randY);
+    }
 }
 
 void killMonster(Game g) {
@@ -667,7 +685,7 @@ void addMonster(Game g) {
 }
 
 void addOneLife(Game g) {
-
+    g->heroLifes++;
 }
 
 void executeCherryOptions(Game g, int n) {
@@ -832,13 +850,14 @@ Game gameInit(Game g)
 	if (g == NULL)
 		g = malloc(sizeof(GameStruct));
     g->cherryPlaced=false;
-   
+    g->heroLifes = 1;
 	imagesCreate();
     gameClearWorld(g);
     gameInstallBoundaries(g);
     gameInstallBlocks(g);
     gameInstallMonsters(g);
 	gameInstallHero(g);
+    
     
 
 	return g;
@@ -866,12 +885,17 @@ void gameRedraw(Game g)
 ******************************************************************************/
 bool checkDeath(Game g,Actor a) {
 	for(int i = 0 ; i < numberOfMonsters ; i++) {
-		if(tyDistance(a->x, a->y, g->monsters[i]->x,  g->monsters[i]->y) <= 1)
+		if(tyDistance(a->x, a->y, g->monsters[i]->x,  g->monsters[i]->y) == 0)
 			return true;
+    
+        
+        
 	}
 	return false;
 	
 }
+
+void removeLife(Game g) {}
 
 bool checkIfIsTrapped(Game g, Actor a) {
 	int counter = 0;
@@ -901,9 +925,13 @@ bool allTrapped(Game g) {
 	return false;
 }
 
-void commandDeath(void) {
-	tyAlertDialog("You lose!","Dead Meat!!");
-	tyQuit();
+void commandDeath() {
+    
+
+    tyAlertDialog("You lose!","Dead Meat!!");
+    tyQuit();
+    
+ 
 }
 
 
@@ -935,8 +963,18 @@ void gameAnimation(Game g) {
         g->cherryPlaced = true;
     }
 
-    if(checkDeath(g, g->hero))
-        commandDeath();
+    if(checkDeath(g, g->hero)) {
+            commandDeath();
+    }
+       
+        
+            
+   
+            
+
+        
+   
+        
 	
 
 
@@ -956,11 +994,14 @@ void gameAnimation(Game g) {
 
 #define STATUS_ITEMS	5
 
-void status(void)
+void status(Game game)
 {
-	String s;
+	String s,t;
 	sprintf(s, "TIME = %d seg.", tySeconds());
+    sprintf(t,"%d LIFE",game->heroLifes);
 	tySetStatusText(4, s);
+    tySetStatusText(0,t);
+    
 }
 
 
@@ -1100,7 +1141,7 @@ void tyHandleRedraw(void)
  ******************************************************************************/
 void tyHandleTime(void)
 {
-	status();
+	status(game);
 	gameAnimation(game);
 }
 
