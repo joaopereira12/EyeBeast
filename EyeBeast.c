@@ -606,6 +606,7 @@ void heroAnimation(Game g, Actor a)
             g->cherryPlaced = false;
             g->cherryTimeCatched = tySeconds();
             g->cherry = NULL;
+
         }
         if(g->world[nx][ny]->kind == BLOCK){
             int existsBlock = 1;
@@ -697,7 +698,7 @@ void executeCherryOptions(Game g, int n) {
         addMonster(g);
       break;
         case 2:
-            addOneLife(g);
+        addOneLife(g);
         break;
       default:break;
   }
@@ -717,8 +718,7 @@ void actorAnimation(Game g, Actor a)
 		case HERO:
 			heroAnimation(g, a);
             g->monsterCounter = g->monsterCounter+1;
-
-		break;
+	    	break;
 		case CHASER:
 			chaserAnimation(g,a);
 			break;
@@ -887,15 +887,21 @@ bool checkDeath(Game g,Actor a) {
 	for(int i = 0 ; i < numberOfMonsters ; i++) {
 		if(tyDistance(a->x, a->y, g->monsters[i]->x,  g->monsters[i]->y) == 0)
 			return true;
-    
-        
         
 	}
 	return false;
 	
 }
-
-void removeLife(Game g) {}
+void removeLife(Game g,Actor a) {
+    int x;
+    int y;
+    do{
+        x = tyRand(WORLD_SIZE_X-2) + 1;
+        y = tyRand(WORLD_SIZE_Y-2) + 1;
+    }while(!cellIsEmpty(g,x,y));
+    actorMove(g,a,x,y);
+    g->heroLifes--;
+}
 
 bool checkIfIsTrapped(Game g, Actor a) {
 	int counter = 0;
@@ -964,21 +970,14 @@ void gameAnimation(Game g) {
     }
 
     if(checkDeath(g, g->hero)) {
-            commandDeath();
+            if(g->heroLifes <= 1)
+                commandDeath();
+            else
+                removeLife(g,g->hero);
     }
-       
-        
-            
-   
-            
-
-        
-   
-        
-	
 
 
-	
+
 }
 
 
