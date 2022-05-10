@@ -30,7 +30,7 @@ Comments:
 
 
  Place here the names and numbers of the authors, plus some comments, as
- asked in the listing of the project. Do not deliver an anonymous file with
+ asked in the listing of the project. Do not deliver an anonymous file with
  unknown authors.
 */
 
@@ -84,99 +84,99 @@ typedef char Line[MAX_LINE];
 typedef int Image;
 
 static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg, cherryImg;
-const char* randomScenarios[4]= { "KILL 1 ENEMY", "ADDED 1 MORE ENEMY","1 MORE LIFE", "ENEMIES FAST", "ADDED 1 BULLET" };
+const char* randomScenarios[4]= { "KILL 1 ENEMY", "ADDED 1 MORE ENEMY","1 MORE LIFE", "ENEMIES FAST", "ENEMIES SLOW" };
 
 /* XPM */
 static tyImage empty_xpm = {
-        "16 16 2 1",
-        "   c None",
-        ".  c #FFFFFF",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................"};
+"16 16 2 1",
+"   c None",
+".  c #FFFFFF",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................"};
 
 /* XPM */
 static tyImage hero_xpm = {
-        "16 16 3 1",
-        "   c None",
-        ".  c #FFFFFF",
-        "+  c #000000",
-        "................",
-        "...+++...+++....",
-        "..+...+.+...+...",
-        ".+.....+.....+..",
-        ".+...+++++...+..",
-        ".+...+++++...+..",
-        ".+...+++++...+..",
-        ".+.....+.....+..",
-        "..+...+.+...+...",
-        "...+++...+++....",
-        "................",
-        ".....+++++......",
-        "....+.....+.....",
-        "................",
-        "................",
-        "................"};
+"16 16 3 1",
+"   c None",
+".  c #FFFFFF",
+"+  c #000000",
+"................",
+"...+++...+++....",
+"..+...+.+...+...",
+".+.....+.....+..",
+".+...+++++...+..",
+".+...+++++...+..",
+".+...+++++...+..",
+".+.....+.....+..",
+"..+...+.+...+...",
+"...+++...+++....",
+"................",
+".....+++++......",
+"....+.....+.....",
+"................",
+"................",
+"................"};
 
 
 /* XPM */
 static tyImage chaser_xpm = {
-        "16 16 3 1",
-        "   c None",
-        ".  c #FFFFFF",
-        "+  c #000000",
-        "................",
-        "...+++...+++....",
-        "..++.++.+.+++...",
-        ".+..+++++++..+..",
-        ".+...+++++...+..",
-        ".+...+++++...+..",
-        ".+...+++++...+..",
-        "..+...+.+...+...",
-        "...+++...+++....",
-        "................",
-        "................",
-        "....+++++++.....",
-        "................",
-        "................",
-        "................",
-        "................"};
+"16 16 3 1",
+"   c None",
+".  c #FFFFFF",
+"+  c #000000",
+"................",
+"...+++...+++....",
+"..++.++.+.+++...",
+".+..+++++++..+..",
+".+...+++++...+..",
+".+...+++++...+..",
+".+...+++++...+..",
+"..+...+.+...+...",
+"...+++...+++....",
+"................",
+"................",
+"....+++++++.....",
+"................",
+"................",
+"................",
+"................"};
 
 /* XPM */
 static tyImage block_xpm = {
-        "16 16 3 1",
-        "   c None",
-        ".  c #000000",
-        "+  c #FFFFFF",
-        "................",
-        "................",
-        "..............+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "................",
-        "..+.+.+.+.+.+.+.",
-        "................"};
+"16 16 3 1",
+"   c None",
+".  c #000000",
+"+  c #FFFFFF",
+"................",
+"................",
+"..............+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"................",
+"..+.+.+.+.+.+.+.",
+"................"};
 
 static tyImage cherry_xpm={
         "16 16 138 2",
@@ -337,48 +337,48 @@ static tyImage cherry_xpm={
 
 /* XPM */
 static tyImage boundary_xpm = {
-        "16 16 3 1",
-        "   c None",
-        ".  c #000000",
-        "+  c #FFFFFF",
-        "................",
-        "................",
-        "..............+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "....+.+.+.+.+...",
-        "...+.+.+.+.+..+.",
-        "................",
-        "..+.+.+.+.+.+.+.",
-        "................"};
+"16 16 3 1",
+"   c None",
+".  c #000000",
+"+  c #FFFFFF",
+"................",
+"................",
+"..............+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"....+.+.+.+.+...",
+"...+.+.+.+.+..+.",
+"................",
+"..+.+.+.+.+.+.+.",
+"................"};
 
 /* XPM */
 static tyImage invalid_xpm = {
-        "16 16 2 1",
-        "   c None",
-        ".  c #FFFFFF",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................",
-        "................"};
+"16 16 2 1",
+"   c None",
+".  c #FFFFFF",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................",
+"................"};
 
 
 /******************************************************************************
@@ -386,13 +386,13 @@ static tyImage invalid_xpm = {
  ******************************************************************************/
 void imagesCreate(void)
 {
-    emptyImg = tyCreateImage(empty_xpm);
-    heroImg = tyCreateImage(hero_xpm);
-    chaserImg = tyCreateImage(chaser_xpm);
-    blockImg = tyCreateImage(block_xpm);
-    boundaryImg = tyCreateImage(boundary_xpm);
+	emptyImg = tyCreateImage(empty_xpm);
+	heroImg = tyCreateImage(hero_xpm);
+	chaserImg = tyCreateImage(chaser_xpm);
+	blockImg = tyCreateImage(block_xpm);
+	boundaryImg = tyCreateImage(boundary_xpm);
     cherryImg = tyCreateImage(cherry_xpm);
-    invalidImg = tyCreateImage(invalid_xpm);
+	invalidImg = tyCreateImage(invalid_xpm);
 }
 
 
@@ -410,7 +410,7 @@ void imagesCreate(void)
 #define ACTOR_PIXELS_Y	16
 
 typedef enum {
-    EMPTY, HERO, CHASER, BLOCK, BOUNDARY,CHERRY
+	EMPTY, HERO, CHASER, BLOCK, BOUNDARY,CHERRY
 } ActorKind;
 
 
@@ -422,6 +422,7 @@ typedef struct {
 
 typedef struct {
 // specific fields can go here, but probably none will be needed
+
 } Chaser;
 
 typedef struct {
@@ -438,8 +439,8 @@ typedef struct {
 typedef struct {
 // factored common fields
     ActorKind kind;
-    int x, y;
-    Image image;
+ 	int x, y;
+	Image image;
     union {
 // specific fields for each kind
         Hero hero;
@@ -458,18 +459,18 @@ int numberOfMonsters = 5;
 
 
 typedef struct {
-    Actor world[WORLD_SIZE_X][WORLD_SIZE_Y];
-    Actor hero;
-    Actor monsters[N_MONSTERS];
+	Actor world[WORLD_SIZE_X][WORLD_SIZE_Y];
+	Actor hero;
+	Actor monsters[N_MONSTERS];
     Actor cherry;
-    String lastAction;
-    int lastActionTime;
     char* lastScenario;
     int monsterCounter;
     bool cherryPlaced;
     int cherryTimeCatched;
     int heroLifes;
-
+    int monsterSpeed;
+    int lastAction;
+    
 } GameStruct, *Game;
 
 /******************************************************************************
@@ -477,15 +478,15 @@ typedef struct {
  ******************************************************************************/
 Image actorImage(ActorKind kind)
 {
-    switch( kind ) {
-        case EMPTY:		return emptyImg;
-        case HERO:		return heroImg;
-        case CHASER:	return chaserImg;
-        case BLOCK:		return blockImg;
-        case BOUNDARY:	return boundaryImg;
+	switch( kind ) {
+		case EMPTY:		return emptyImg;
+		case HERO:		return heroImg;
+		case CHASER:	return chaserImg;
+		case BLOCK:		return blockImg;
+		case BOUNDARY:	return boundaryImg;
         case CHERRY:	return cherryImg;
-        default:		return invalidImg;
-    }
+		default:		return invalidImg;
+	}
 }
 
 /******************************************************************************
@@ -493,8 +494,8 @@ Image actorImage(ActorKind kind)
  ******************************************************************************/
 void cellSet(Game g, Actor a, int x, int y, Image img)
 {
-    tyDrawImage(img, x * ACTOR_PIXELS_X, y * ACTOR_PIXELS_Y);
-    g->world[x][y] = a;
+	tyDrawImage(img, x * ACTOR_PIXELS_X, y * ACTOR_PIXELS_Y);
+	g->world[x][y] = a;	
 }
 
 /******************************************************************************
@@ -502,7 +503,7 @@ void cellSet(Game g, Actor a, int x, int y, Image img)
  ******************************************************************************/
 bool cellIsEmpty(Game g, int x, int y)
 {
-    return g->world[x][y] == NULL;
+	return g->world[x][y] == NULL;
 }
 
 /******************************************************************************
@@ -510,7 +511,7 @@ bool cellIsEmpty(Game g, int x, int y)
  ******************************************************************************/
 void actorShow(Game g, Actor a)
 {
-    cellSet(g, a, a->x, a->y, a->image);
+	cellSet(g, a, a->x, a->y, a->image);
 }
 
 /******************************************************************************
@@ -518,7 +519,7 @@ void actorShow(Game g, Actor a)
  ******************************************************************************/
 void actorHide(Game g, Actor a)
 {
-    cellSet(g, NULL, a->x, a->y, emptyImg);
+	cellSet(g, NULL, a->x, a->y, emptyImg);
 }
 
 /******************************************************************************
@@ -527,10 +528,10 @@ void actorHide(Game g, Actor a)
  ******************************************************************************/
 void actorMove(Game g, Actor a, int nx, int ny)
 {
-    actorHide(g, a);
-    a->x = nx;
-    a->y = ny;
-    actorShow(g, a);
+	actorHide(g, a);
+	a->x = nx;
+	a->y = ny;
+	actorShow(g, a);
 }
 
 /******************************************************************************
@@ -538,20 +539,36 @@ void actorMove(Game g, Actor a, int nx, int ny)
  ******************************************************************************/
 Actor actorNew(Game g, ActorKind kind, int x, int y)
 {
-    Actor a = malloc(sizeof(ActorStruct));
-    a->kind = kind;
-    a->x = x;
-    a->y = y;
-    a->image = actorImage(kind);
-    actorShow(g, a);
-    return a;
+	Actor a = malloc(sizeof(ActorStruct));
+	a->kind = kind;
+	a->x = x;
+	a->y = y;
+	a->image = actorImage(kind);
+	actorShow(g, a);
+    
+	return a;
 }
 
 bool checkIfMoveIsPossible(Game g, int dx, int dy,int nx, int ny, int appendX, int appendY){
+
+    /*const char* dayNames[] = {"EMPTY", "HERO", "CHASER","BLOCK","BOUNDARY" };
+    //TODO REMOVER ISTO QUANDO FOR PARA ENTREGAR, APENAS PARA TESTES
+/*if((!cellIsEmpty(g,nx+appendX,ny) && dx > 0 &&(g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) )){
+        printf("dir %s\n",dayNames[g->world[nx + appendX][ny]->kind]);
+    }
+    if((!cellIsEmpty(g,nx-appendX,ny) && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) )){
+        printf("esq %s\n",dayNames[g->world[nx - appendX][ny]->kind]);
+    }
+    if((!cellIsEmpty(g,nx,ny+appendY) && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) )){
+        printf("baixo %s\n",dayNames[g->world[nx][ny+appendY]->kind]);
+    }if((!cellIsEmpty(g,nx,ny-appendY) && dy < 0&&(g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ) )){
+        printf("cima %s\n",dayNames[g->world[nx][ny-appendY]->kind]);
+    }/*
+    */
     return !(!cellIsEmpty(g,nx+appendX,ny)  && dx > 0 && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) ||
-             !cellIsEmpty(g,nx-appendX,ny)  && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) ||
-             !cellIsEmpty(g,nx,ny+appendY)  && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) ||
-             !cellIsEmpty(g,nx,ny-appendY)  && dy < 0 && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ));
+               !cellIsEmpty(g,nx-appendX,ny)  && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx,ny+appendY)  && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) ||
+               !cellIsEmpty(g,nx,ny-appendY)  && dy < 0 && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ));
 }
 
 void cherryAnimation(Game g, Actor a) {
@@ -579,23 +596,20 @@ void cherryAnimation(Game g, Actor a) {
  ******************************************************************************/
 void heroAnimation(Game g, Actor a)
 {
-    int dx = tyKeyDeltaX(), dy = tyKeyDeltaY();
+	int dx = tyKeyDeltaX(), dy = tyKeyDeltaY();
 
-    int nx = a->x + dx, ny = a->y + dy;
+	int nx = a->x + dx, ny = a->y + dy;
     int  appendX = 0,  appendY =0;
-    if (cellIsEmpty(g, nx, ny)){
+	if (cellIsEmpty(g, nx, ny)){
         actorMove(g, a, nx, ny);
     }else{
         if(g->world[nx][ny]->kind == CHERRY) {
-            int n = tyRand(3);
-            executeCherryOptions(g,2);
-
+            int n = tyRand(5);
+            executeCherryOptions(g,n);
             printf("CHEERY: %s\n",randomScenarios[n]);
-
             g->cherryPlaced = false;
             g->cherryTimeCatched = tySeconds();
             g->cherry = NULL;
-
         }
         if(g->world[nx][ny]->kind == BLOCK){
             int existsBlock = 1;
@@ -629,7 +643,7 @@ bool chaserCanMove(Game g, int x, int y) {
 }
 
 void chaserAnimation(Game g, Actor a) {
-    int xHero = g->hero->x;
+		int xHero = g->hero->x;
     int yHero = g->hero->y;
 
     int getDistance = tyDistance(xHero,yHero, a->x, a->y);
@@ -655,10 +669,10 @@ void chaserAnimation(Game g, Actor a) {
 }
 
 void killMonster(Game g) {
-
+    
     Actor toKill = g->monsters[numberOfMonsters-1];
     actorHide(g,toKill);
-    g->monsters[--numberOfMonsters] = NULL;
+   g->monsters[--numberOfMonsters] = NULL;
 
 }
 
@@ -669,7 +683,7 @@ void addMonster(Game g) {
         y = tyRand(WORLD_SIZE_Y-2) + 1;
     } while (!cellIsEmpty(g,x,y));
     Actor newMonster = actorNew(g,CHASER,x,y);
-
+    
     g->monsters[numberOfMonsters++] = newMonster;
 
 }
@@ -678,21 +692,46 @@ void addOneLife(Game g) {
     g->heroLifes++;
 }
 
+void fasterMonsters(Game g) {
+    
+    g->monsterSpeed=5;
+   
+}
+
+bool slowerMonsters(Game g) {
+     
+    // // tySetStatusText(1,"MONSTERS SLOWER");
+ 
+    // // tySetStatusText(1,tySeconds());
+    // if(tySeconds() == g->cherryTimeCatched+7) {
+    //     printf("DONE");
+    //     g->monsterSpeed=10;}
+    //     else  g->monsterSpeed=20;
+    g->monsterSpeed = 20;
+   
+}
+
 void executeCherryOptions(Game g, int n) {
-    switch(n) {
-        case 0:
-            killMonster(g);
-            break;
-        case 1:
-            addMonster(g);
-            break;
+  switch(n) {
+      case 0:
+        killMonster(g);
+      break;
+      case 1:
+        addMonster(g);
+      break;
         case 2:
             addOneLife(g);
-            break;
-        default:break;
-    }
-    strcpy(g->lastAction,randomScenarios[n]);
-    g->lastActionTime = tySeconds();
+        break;
+        case 3:
+            fasterMonsters(g);
+        break;
+        case 4:
+            slowerMonsters(g);
+        break;
+      default:break;
+  }
+
+  g->lastAction = tySeconds();
 }
 
 
@@ -704,20 +743,21 @@ void executeCherryOptions(Game g, int n) {
 
 void actorAnimation(Game g, Actor a)
 {
-
-    switch( a->kind ) {
-        case HERO:
-            heroAnimation(g, a);
+	
+	switch( a->kind ) {
+		case HERO:
+			heroAnimation(g, a);
             g->monsterCounter = g->monsterCounter+1;
-            break;
-        case CHASER:
-            chaserAnimation(g,a);
-            break;
+
+		break;
+		case CHASER:
+			chaserAnimation(g,a);
+			break;
         case CHERRY:
             cherryAnimation(g,a);
             break;
-        default: break;
-    }
+		default: break;
+	}
 }
 
 /******************************************************************************/
@@ -733,7 +773,7 @@ void gameClearWorld(Game g)
 {
     for(int y = 0; y < WORLD_SIZE_Y ; y++)
         for(int x = 0; x < WORLD_SIZE_X ; x++ )
-            cellSet(g, NULL, x, y, emptyImg);
+			cellSet(g, NULL, x, y, emptyImg);
 }
 
 /******************************************************************************
@@ -741,12 +781,12 @@ void gameClearWorld(Game g)
  ******************************************************************************/
 void gameInstallBoundaries(Game g)
 {
-    for(int y = 0; y < WORLD_SIZE_Y ; y++)
+     for(int y = 0; y < WORLD_SIZE_Y ; y++)
         for(int x = 0; x < WORLD_SIZE_X ; x++)
             if( x == 0 || x == WORLD_SIZE_X - 1
-                || y == 0 || y == WORLD_SIZE_Y - 1 ) {
-                actorNew(g, BOUNDARY, x, y);
-            }
+            || y == 0 || y == WORLD_SIZE_Y - 1 ) {
+               actorNew(g, BOUNDARY, x, y);
+             }
 }
 
 /******************************************************************************
@@ -794,7 +834,7 @@ void gameInstallMonsters(Game g)
         i++;
     }
 
-
+   
 }
 
 
@@ -829,7 +869,7 @@ void gameInstallHero(Game g)
         }
     }
     g->hero = actorNew(g, HERO, x, y);
-
+    
 
 }
 
@@ -838,20 +878,22 @@ void gameInstallHero(Game g)
  ******************************************************************************/
 Game gameInit(Game g)
 {
-    if (g == NULL)
-        g = malloc(sizeof(GameStruct));
+	if (g == NULL)
+		g = malloc(sizeof(GameStruct));
     g->cherryPlaced=false;
     g->heroLifes = 1;
+    g->monsterSpeed=10;
+    g->lastAction=0;
     imagesCreate();
     gameClearWorld(g);
     gameInstallBoundaries(g);
     gameInstallBlocks(g);
     gameInstallMonsters(g);
-    gameInstallHero(g);
+	gameInstallHero(g);
+    
+    
 
-
-
-    return g;
+	return g;
 }
 
 /******************************************************************************
@@ -861,12 +903,12 @@ Game gameInit(Game g)
  ******************************************************************************/
 void gameRedraw(Game g)
 {
-    for(int y = 0; y < WORLD_SIZE_Y; y++)
-        for(int x = 0; x < WORLD_SIZE_X; x++) {
-            Actor a = g->world[x][y];
-            if( !cellIsEmpty(g, x, y) )
-                actorShow(g, a);
-        }
+	for(int y = 0; y < WORLD_SIZE_Y; y++)
+		for(int x = 0; x < WORLD_SIZE_X; x++) {
+			Actor a = g->world[x][y];
+			if( !cellIsEmpty(g, x, y) )
+				actorShow(g, a);
+		}
 }
 
 /******************************************************************************
@@ -875,85 +917,94 @@ void gameRedraw(Game g)
  * INCOMPLETE!
 ******************************************************************************/
 bool checkDeath(Game g,Actor a) {
-    for(int i = 0 ; i < numberOfMonsters ; i++) {
-        if(tyDistance(a->x, a->y, g->monsters[i]->x,  g->monsters[i]->y) == 0)
-            return true;
-
-    }
-    return false;
-
+	for(int i = 0 ; i < numberOfMonsters ; i++) {
+		if(tyDistance(a->x, a->y, g->monsters[i]->x,  g->monsters[i]->y) == 0)
+			return true;
+    
+        
+        
+	}
+	return false;
+	
 }
-void removeLife(Game g,Actor a) {
-    int x;
-    int y;
-    do{
-        x = tyRand(WORLD_SIZE_X-2) + 1;
-        y = tyRand(WORLD_SIZE_Y-2) + 1;
-    }while(!cellIsEmpty(g,x,y));
-    actorMove(g,a,x,y);
-    g->heroLifes--;
-}
+
+void removeLife(Game g) {}
 
 bool checkIfIsTrapped(Game g, Actor a) {
-    int counter = 0;
-    int N_CELLS_TO_TRAP = 9;
-    int actorX = a->x;
-    int actorY = 	a->y;
-    for(int i = -1; i <=1; i++ ) {
-        for(int j = -1; j <=1; j++) {
-            if(!cellIsEmpty(g,actorX + i, actorY +j))
-                counter++;
-        }
-    }
-    if(counter == N_CELLS_TO_TRAP) return true;
-    return false;
+	int counter = 0;
+	int N_CELLS_TO_TRAP = 9;
+	int actorX = a->x;
+	int actorY = 	a->y;
+	for(int i = -1; i <=1; i++ ) {
+		for(int j = -1; j <=1; j++) {
+			if(!cellIsEmpty(g,actorX + i, actorY +j))
+				counter++;
+		}
+	}
+	if(counter == N_CELLS_TO_TRAP) return true;
+	return false;
 
-
+	
 }
 
 bool allTrapped(Game g) {
-    int counter = 0;
-    for(int i = 0 ; i < numberOfMonsters ; i++) {
-        if(checkIfIsTrapped(g,g->monsters[i]))
-            counter++;
-    }
-    if(counter == numberOfMonsters)
-        return true;
-    return false;
+	int counter = 0;
+	for(int i = 0 ; i < numberOfMonsters ; i++) {
+		if(checkIfIsTrapped(g,g->monsters[i]))
+			counter++;
+	}
+	if(counter == numberOfMonsters) 
+		return true;
+	return false;
 }
 
 void commandDeath() {
-
+    
 
     tyAlertDialog("You lose!","Dead Meat!!");
     tyQuit();
-
-
+    
+ 
 }
 
 
 void commandWin(void)
 {
-    tyAlertDialog("Game Over", "You Won!");
-    tyQuit();
+	tyAlertDialog("Game Over", "You Won!");
+	tyQuit();
 }
 
 void gameAnimation(Game g) {
 
-    if(allTrapped(g))
-        commandWin();
+	if(allTrapped(g))
+		commandWin();
 
-
-
-    actorAnimation(g, g->hero);
+ 
+    
+	actorAnimation(g, g->hero);
 
     // if(g->cherry != NULL)
     //     actorAnimation(g, g->cherry);
-
-    if(g->monsterCounter%10==0) {
-        for(int i = 0 ; i < numberOfMonsters ; i++)
-            actorAnimation(g, g->monsters[i]);
+    if(  g->monsterSpeed != 10) {
+        if(g->lastAction + 5 >= tySeconds()) {
+            
+            if(g->monsterCounter%g->monsterSpeed==0) {
+            for(int i = 0 ; i < numberOfMonsters ; i++)
+                actorAnimation(g, g->monsters[i]);	
+            }
+        } else
+            g->monsterSpeed = 10;
+        
     }
+        else{
+    
+      
+        if(g->monsterCounter%g->monsterSpeed==0) {
+        for(int i = 0 ; i < numberOfMonsters ; i++)               
+             actorAnimation(g, g->monsters[i]);	
+        }
+        }
+    
 
     if(tySeconds()%5==0 && !g->cherryPlaced){
         gameInstallCherry(g);
@@ -961,14 +1012,21 @@ void gameAnimation(Game g) {
     }
 
     if(checkDeath(g, g->hero)) {
-        if(g->heroLifes <= 1)
             commandDeath();
-        else
-            removeLife(g,g->hero);
     }
+       
+        
+            
+   
+            
+
+        
+   
+        
+	
 
 
-
+	
 }
 
 
@@ -986,17 +1044,18 @@ void gameAnimation(Game g) {
 
 void status(Game game)
 {
-    String s,t,x;
-    sprintf(s, "TIME = %d seg.", tySeconds());
+	String s,t,x;
+	sprintf(s, "TIME = %d seg.", tySeconds());
+    sprintf(x, "SPEED = %d ", game->monsterSpeed);
     sprintf(t,"%d LIFE",game->heroLifes);
-    if(game->lastActionTime+2 >= tySeconds())
-        sprintf(x,"%s",game->lastAction);
-    else
-        sprintf(x,"");
-    tySetStatusText(4, s);
+	tySetStatusText(4, s);
     tySetStatusText(0,t);
     tySetStatusText(2,x);
-
+    if(game->lastAction + 5 >= tySeconds())
+        tySetStatusText(1,"skrt");
+    else 
+        tySetStatusText(1,"");
+    
 }
 
 
@@ -1013,25 +1072,25 @@ void status(Game game)
 
 void comandAbout(void)
 {
-    tyAlertDialog("About", "%s\n%s\n\n%s\n%s",
-                  APP_NAME,
-                  "(Reimplementation of the original game of Chuck Shotton)",
-                  AUTHOR1,
-                  AUTHOR2);
+	tyAlertDialog("About", "%s\n%s\n\n%s\n%s",
+		APP_NAME,
+		"(Reimplementation of the original game of Chuck Shotton)",
+		AUTHOR1,
+		AUTHOR2);
 
 
 }
 
 void comandRestart(void)
 {
-    tyHandleStart();
+	tyHandleStart();
 }
 
 
 void comandFinish(void)
 {
-    tyAlertDialog("Quit", "See you later!");
-    tyQuit();
+	tyAlertDialog("Quit", "See you later!");
+	tyQuit();
 }
 
 
@@ -1043,81 +1102,81 @@ void comandFinish(void)
 /* FUNCTIONS REQUIRED BY THE FRAMEWORK wxTiny */
 
 /******************************************************************************
- * Section with all the "root" "functions required by the wxTiny support system.
- *
+ * Section with all the "root" "functions required by the wxTiny support system. 
+ * 
  * There is no function "main" in a wxTiny program, as the main function is
  * hidden within the wxTiny library. The most important thing you need to know
  * is that the function "tyHandleStart" is called when the program begins,
  * and that function "tyHandleTime" is called periodically 10 times per second,
  * to make the program progress. In some sense, both this function make a kind
  * of main function.
- *
+ * 
  * More information about the wxTiny functions in the file "wxTiny.h".
  ******************************************************************************/
 
 static Game game = NULL;  // defined here to be available to the "root" functions
 
-/******************************************************************************
+/****************************************************************************** 
  * tyAppName - specify the name of the app
  ******************************************************************************/
 tyStr tyAppName(void)
 {
-    return APP_NAME;
+	return APP_NAME;
 }
 
-/******************************************************************************
+/****************************************************************************** 
  * tyWidth - specify the width of the window
  ******************************************************************************/
 int tyWidth(void)
 {
-    return WORLD_SIZE_X * ACTOR_PIXELS_X;
+	return WORLD_SIZE_X * ACTOR_PIXELS_X;
 }
 
-/******************************************************************************
+/****************************************************************************** 
  * tyHeight - specify the height of the window
  ******************************************************************************/
 int tyHeight(void)
 {
-    return WORLD_SIZE_Y * ACTOR_PIXELS_Y;
+	return WORLD_SIZE_Y * ACTOR_PIXELS_Y;
 }
 
-/******************************************************************************
+/****************************************************************************** 
  * tyStatusItems - specify the number of slots available in the status bar
  ******************************************************************************/
 int tyStatusItems(void)
 {
-    return STATUS_ITEMS;
+	return STATUS_ITEMS;
 }
 
-/******************************************************************************
+/****************************************************************************** 
  * tyMenus - specify the menus
  ******************************************************************************/
 tyStr tyMenus(void)
 {
-    return ":+Menu"
-           ":&About\tCtrl-A"
-           ":-"
-           ":&Restart\tCtrl-R"
-           ":-"
-           ":&Quit\tCtrl-Q";
+	return ":+Menu"
+			":&About\tCtrl-A"
+			":-"
+			":&Restart\tCtrl-R"
+			":-"
+			":&Quit\tCtrl-Q";
 }
 
-/******************************************************************************
+/****************************************************************************** 
  * tyHandleMenuCommand - Handles the menu commands
  ******************************************************************************/
 void tyHandleMenuCommand(tyStr command)
 {
-    if( strcmp(command, "About") == 0 )
-        comandAbout();
-    else if( strcmp(command, "Restart") == 0 )
-        comandRestart();
-    else if( strcmp(command, "Quit") == 0 )
-        comandFinish();
-    else
-        tyFatalError("Unknown command: \"%s\"", command);
+	if( strcmp(command, "About") == 0 )
+		comandAbout();
+	else if( strcmp(command, "Restart") == 0 )
+		comandRestart();
+	else if( strcmp(command, "Quit") == 0 )
+		comandFinish();
+	else
+		tyFatalError("Unknown command: \"%s\"", command);
 }
 
-/******************************************************************************
+/****************************************************************************** 
  * tyHandleRedraw - redraws the window
  *
  * Automatically called  in rare situations, for example if the game window is
@@ -1125,27 +1184,28 @@ void tyHandleMenuCommand(tyStr command)
  ******************************************************************************/
 void tyHandleRedraw(void)
 {
-    gameRedraw(game);
+	gameRedraw(game);
 }
 
-/******************************************************************************
+/****************************************************************************** 
  * tyHandleTime - Called periodically, around 10 time per second
- *
+ * 
  * This function does the following: animate the actors; update the status bar;
  *    possibly more things
  ******************************************************************************/
 void tyHandleTime(void)
 {
-    status(game);
-    gameAnimation(game);
+	status(game);
+	gameAnimation(game);
 }
 
-/******************************************************************************
+/****************************************************************************** 
  * tyHandleStart - Program initialization
  ******************************************************************************/
 void tyHandleStart(void)
 {
-    tySecondsSetZero();
-    tySetSpeed(5);
-    game = gameInit(game);
+	tySecondsSetZero();
+	tySetSpeed(5);
+	game = gameInit(game);
 }
+
