@@ -84,7 +84,7 @@ typedef char Line[MAX_LINE];
 typedef int Image;
 
 static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg, cherryImg;
-const char* randomScenarios[4]= { "KILL 1 ENEMY", "ADDED 1 MORE ENEMY","1 MORE LIFE", "ENEMIES FAST", "ENEMIES SLOW" };
+const char* randomScenarios[4]= { "KILL 1 ENEMY", "ADDED 1 MORE ENEMY","1 MORE LIFE", "ENEMIES FAST", "ADDED 1 BULLET" };
 
 /* XPM */
 static tyImage empty_xpm = {
@@ -422,7 +422,6 @@ typedef struct {
 
 typedef struct {
 // specific fields can go here, but probably none will be needed
-
 } Chaser;
 
 typedef struct {
@@ -463,13 +462,13 @@ typedef struct {
 	Actor hero;
 	Actor monsters[N_MONSTERS];
     Actor cherry;
+    String lastAction;
+    int lastActionTime;
     char* lastScenario;
     int monsterCounter;
     bool cherryPlaced;
     int cherryTimeCatched;
     int heroLifes;
-    int monsterSpeed;
-    int lastAction;
     
 } GameStruct, *Game;
 
@@ -545,7 +544,6 @@ Actor actorNew(Game g, ActorKind kind, int x, int y)
 	a->y = y;
 	a->image = actorImage(kind);
 	actorShow(g, a);
-    
 	return a;
 }
 
@@ -589,12 +587,15 @@ void heroAnimation(Game g, Actor a)
         actorMove(g, a, nx, ny);
     }else{
         if(g->world[nx][ny]->kind == CHERRY) {
-            int n = tyRand(5);
-            executeCherryOptions(g,n);
+            int n = tyRand(3);
+            executeCherryOptions(g,2);
+
             printf("CHEERY: %s\n",randomScenarios[n]);
+
             g->cherryPlaced = false;
             g->cherryTimeCatched = tySeconds();
             g->cherry = NULL;
+
         }
         if(g->world[nx][ny]->kind == BLOCK){
             int existsBlock = 1;
@@ -677,25 +678,6 @@ void addOneLife(Game g) {
     g->heroLifes++;
 }
 
-void fasterMonsters(Game g) {
-    
-    g->monsterSpeed=5;
-   
-}
-
-bool slowerMonsters(Game g) {
-     
-    // // tySetStatusText(1,"MONSTERS SLOWER");
- 
-    // // tySetStatusText(1,tySeconds());
-    // if(tySeconds() == g->cherryTimeCatched+7) {
-    //     printf("DONE");
-    //     g->monsterSpeed=10;}
-    //     else  g->monsterSpeed=20;
-    g->monsterSpeed = 20;
-   
-}
-
 void executeCherryOptions(Game g, int n) {
   switch(n) {
       case 0:
@@ -705,20 +687,12 @@ void executeCherryOptions(Game g, int n) {
         addMonster(g);
       break;
         case 2:
-            addOneLife(g);
-        break;
-        case 3:
-            fasterMonsters(g);
-        break;
-        case 4:
-            slowerMonsters(g);
-=======
->>>>>>> parent of 2f5238b... coisas na life
+        addOneLife(g);
         break;
       default:break;
   }
-
-  g->lastAction = tySeconds();
+    strcpy(g->lastAction,randomScenarios[n]);
+    g->lastActionTime = tySeconds();
 }
 
 
@@ -735,8 +709,7 @@ void actorAnimation(Game g, Actor a)
 		case HERO:
 			heroAnimation(g, a);
             g->monsterCounter = g->monsterCounter+1;
-
-		break;
+	    	break;
 		case CHASER:
 			chaserAnimation(g,a);
 			break;
@@ -869,9 +842,7 @@ Game gameInit(Game g)
 		g = malloc(sizeof(GameStruct));
     g->cherryPlaced=false;
     g->heroLifes = 1;
-    g->monsterSpeed=10;
-    g->lastAction=0;
-    imagesCreate();
+	imagesCreate();
     gameClearWorld(g);
     gameInstallBoundaries(g);
     gameInstallBlocks(g);
@@ -907,15 +878,21 @@ bool checkDeath(Game g,Actor a) {
 	for(int i = 0 ; i < numberOfMonsters ; i++) {
 		if(tyDistance(a->x, a->y, g->monsters[i]->x,  g->monsters[i]->y) == 0)
 			return true;
-    
-        
         
 	}
 	return false;
 	
 }
-
-void removeLife(Game g) {}
+void removeLife(Game g,Actor a) {
+    int x;
+    int y;
+    do{
+        x = tyRand(WORLD_SIZE_X-2) + 1;
+        y = tyRand(WORLD_SIZE_Y-2) + 1;
+    }while(!cellIsEmpty(g,x,y));
+    actorMove(g,a,x,y);
+    g->heroLifes--;
+}
 
 bool checkIfIsTrapped(Game g, Actor a) {
 	int counter = 0;
@@ -967,31 +944,16 @@ void gameAnimation(Game g) {
 		commandWin();
 
  
-    
+
 	actorAnimation(g, g->hero);
 
     // if(g->cherry != NULL)
     //     actorAnimation(g, g->cherry);
-    if(  g->monsterSpeed != 10) {
-        if(g->lastAction + 5 >= tySeconds()) {
-            
-            if(g->monsterCounter%g->monsterSpeed==0) {
-            for(int i = 0 ; i < numberOfMonsters ; i++)
-                actorAnimation(g, g->monsters[i]);	
-            }
-        } else
-            g->monsterSpeed = 10;
-        
-    }
-        else{
-    
-      
-        if(g->monsterCounter%g->monsterSpeed==0) {
-        for(int i = 0 ; i < numberOfMonsters ; i++)               
-             actorAnimation(g, g->monsters[i]);	
-        }
-        }
-    
+
+	if(g->monsterCounter%10==0) {
+	for(int i = 0 ; i < numberOfMonsters ; i++)
+		actorAnimation(g, g->monsters[i]);	
+	}
 
     if(tySeconds()%5==0 && !g->cherryPlaced){
         gameInstallCherry(g);
@@ -999,21 +961,14 @@ void gameAnimation(Game g) {
     }
 
     if(checkDeath(g, g->hero)) {
-            commandDeath();
+            if(g->heroLifes <= 1)
+                commandDeath();
+            else
+                removeLife(g,g->hero);
     }
-       
-        
-            
-   
-            
-
-        
-   
-        
-	
 
 
-	
+
 }
 
 
@@ -1033,16 +988,15 @@ void status(Game game)
 {
 	String s,t,x;
 	sprintf(s, "TIME = %d seg.", tySeconds());
-    sprintf(x, "SPEED = %d ", game->monsterSpeed);
     sprintf(t,"%d LIFE",game->heroLifes);
+    if(game->lastActionTime+2 >= tySeconds())
+        sprintf(x,"%s",game->lastAction);
+    else
+        sprintf(x,"");
 	tySetStatusText(4, s);
     tySetStatusText(0,t);
     tySetStatusText(2,x);
-    if(game->lastAction + 5 >= tySeconds())
-        tySetStatusText(1,"skrt");
-    else 
-        tySetStatusText(1,"");
-    
+
 }
 
 
