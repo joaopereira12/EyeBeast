@@ -462,6 +462,8 @@ typedef struct {
 	Actor hero;
 	Actor monsters[N_MONSTERS];
     Actor cherry;
+    String lastAction;
+    int lastActionTime;
     char* lastScenario;
     int monsterCounter;
     bool cherryPlaced;
@@ -546,21 +548,6 @@ Actor actorNew(Game g, ActorKind kind, int x, int y)
 }
 
 bool checkIfMoveIsPossible(Game g, int dx, int dy,int nx, int ny, int appendX, int appendY){
-
-    /*const char* dayNames[] = {"EMPTY", "HERO", "CHASER","BLOCK","BOUNDARY" };
-    //TODO REMOVER ISTO QUANDO FOR PARA ENTREGAR, APENAS PARA TESTES
-/*if((!cellIsEmpty(g,nx+appendX,ny) && dx > 0 &&(g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) )){
-        printf("dir %s\n",dayNames[g->world[nx + appendX][ny]->kind]);
-    }
-    if((!cellIsEmpty(g,nx-appendX,ny) && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) )){
-        printf("esq %s\n",dayNames[g->world[nx - appendX][ny]->kind]);
-    }
-    if((!cellIsEmpty(g,nx,ny+appendY) && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) )){
-        printf("baixo %s\n",dayNames[g->world[nx][ny+appendY]->kind]);
-    }if((!cellIsEmpty(g,nx,ny-appendY) && dy < 0&&(g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ) )){
-        printf("cima %s\n",dayNames[g->world[nx][ny-appendY]->kind]);
-    }/*
-    */
     return !(!cellIsEmpty(g,nx+appendX,ny)  && dx > 0 && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) ||
                !cellIsEmpty(g,nx-appendX,ny)  && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) ||
                !cellIsEmpty(g,nx,ny+appendY)  && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) ||
@@ -602,7 +589,9 @@ void heroAnimation(Game g, Actor a)
         if(g->world[nx][ny]->kind == CHERRY) {
             int n = tyRand(3);
             executeCherryOptions(g,2);
+
             printf("CHEERY: %s\n",randomScenarios[n]);
+
             g->cherryPlaced = false;
             g->cherryTimeCatched = tySeconds();
             g->cherry = NULL;
@@ -702,6 +691,8 @@ void executeCherryOptions(Game g, int n) {
         break;
       default:break;
   }
+    strcpy(g->lastAction,randomScenarios[n]);
+    g->lastActionTime = tySeconds();
 }
 
 
@@ -995,12 +986,17 @@ void gameAnimation(Game g) {
 
 void status(Game game)
 {
-	String s,t;
+	String s,t,x;
 	sprintf(s, "TIME = %d seg.", tySeconds());
     sprintf(t,"%d LIFE",game->heroLifes);
+    if(game->lastActionTime+2 >= tySeconds())
+        sprintf(x,"%s",game->lastAction);
+    else
+        sprintf(x,"");
 	tySetStatusText(4, s);
     tySetStatusText(0,t);
-    
+    tySetStatusText(2,x);
+
 }
 
 
