@@ -539,28 +539,16 @@ Actor actorNew(Game g, ActorKind kind, int x, int y)
 	return a;
 }
 
-bool checkIfMoveIsPossible(Game g, int dx, int dy,int nx, int ny, int appendX, int appendY){
-
-    /*const char* dayNames[] = {"EMPTY", "HERO", "CHASER","BLOCK","BOUNDARY" };
-    //TODO REMOVER ISTO QUANDO FOR PARA ENTREGAR, APENAS PARA TESTES
-/*if((!cellIsEmpty(g,nx+appendX,ny) && dx > 0 &&(g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) )){
-        printf("dir %s\n",dayNames[g->world[nx + appendX][ny]->kind]);
-    }
-    if((!cellIsEmpty(g,nx-appendX,ny) && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) )){
-        printf("esq %s\n",dayNames[g->world[nx - appendX][ny]->kind]);
-    }
-    if((!cellIsEmpty(g,nx,ny+appendY) && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) )){
-        printf("baixo %s\n",dayNames[g->world[nx][ny+appendY]->kind]);
-    }if((!cellIsEmpty(g,nx,ny-appendY) && dy < 0&&(g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ) )){
-        printf("cima %s\n",dayNames[g->world[nx][ny-appendY]->kind]);
-    }/*
-    */
-    return !(!cellIsEmpty(g,nx+appendX,ny)  && dx > 0 && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) ||
-               !cellIsEmpty(g,nx-appendX,ny)  && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) ||
-               !cellIsEmpty(g,nx,ny+appendY)  && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) ||
-               !cellIsEmpty(g,nx,ny-appendY)  && dy < 0 && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ));
+bool checkKinds(Game g,int nx,int ny){
+    return (g->world[nx][ny]->kind == BOUNDARY || g->world[nx][ny]->kind == CHASER);
 }
 
+bool checkIfMoveIsPossible(Game g, int dx, int dy,int nx, int ny, int appendX, int appendY){
+    return !(!cellIsEmpty(g,nx+appendX,ny)  && dx > 0 && checkKinds(g,nx+appendX,ny) ||
+               !cellIsEmpty(g,nx-appendX,ny)  && dx < 0 &&checkKinds(g,nx-appendX,ny) ||
+               !cellIsEmpty(g,nx,ny+appendY)  && dy > 0 && checkKinds(g,nx,ny+appendY)||
+               !cellIsEmpty(g,nx,ny-appendY)  && dy < 0 && checkKinds(g,nx,ny-appendY));
+}
 void cherryAnimation(Game g, Actor a) {
     int whichWay = tyRand(2);
     int nextX, nextY;
@@ -705,14 +693,12 @@ void gameInstallBlocks(Game g)
     g->cherryTimeCatched = tySeconds();
     int i = 0;
     int max = 110;
-    int counter = 0;
     while (i <= max){
         int x = tyRand(WORLD_SIZE_X-2) + 1;
         int y = tyRand(WORLD_SIZE_Y-2) + 1;
-        if(cellIsEmpty(g,x,y)) {
+        if(cellIsEmpty(g,x,y))
             actorNew(g, BLOCK, x, y);
-            /*printf("contador %d\n",tyRand(2));*/
-        }else
+        else
             max++;
         i++;
     }
@@ -875,7 +861,7 @@ void gameAnimation(Game g) {
 
 	actorAnimation(g, g->hero);
 
-    if(g->cherry != NULL)
+    if(g->cherry != NULL && tySeconds() % 5)
         actorAnimation(g, g->cherry);
 
 	if(g->monsterCounter%10==0) {
