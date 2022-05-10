@@ -706,12 +706,15 @@ void executeCherryOptions(Game g, int n) {
       break;
         case 2:
             addOneLife(g);
+<<<<<<< HEAD
         break;
         case 3:
             fasterMonsters(g);
         break;
         case 4:
             slowerMonsters(g);
+=======
+>>>>>>> parent of 2f5238b... coisas na life
         break;
       default:break;
   }
@@ -912,16 +915,8 @@ bool checkDeath(Game g,Actor a) {
 	return false;
 	
 }
-void removeLife(Game g,Actor a) {
-    int x;
-    int y;
-    do{
-        x = tyRand(WORLD_SIZE_X-2) + 1;
-        y = tyRand(WORLD_SIZE_Y-2) + 1;
-    }while(!cellIsEmpty(g,x,y));
-    actorMove(g,a,x,y);
-    g->heroLifes--;
-}
+
+void removeLife(Game g) {}
 
 void removeLife(Game g) {}
 
@@ -1008,6 +1003,7 @@ void gameAnimation(Game g) {
 
     if(checkDeath(g, g->hero)) {
             commandDeath();
+<<<<<<< HEAD
     }
        
         
@@ -1026,10 +1022,22 @@ void gameAnimation(Game g) {
                 commandDeath();
             else
                 removeLife(g,g->hero);
+=======
+>>>>>>> parent of 2f5238b... coisas na life
     }
+       
+        
+            
+   
+            
+
+        
+   
+        
+	
 
 
-
+	
 }
 
 
