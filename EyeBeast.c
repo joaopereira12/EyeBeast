@@ -706,7 +706,6 @@ void executeCherryOptions(Game g, int n) {
       break;
         case 2:
             addOneLife(g);
-<<<<<<< HEAD
         break;
         case 3:
             fasterMonsters(g);
@@ -918,8 +917,6 @@ bool checkDeath(Game g,Actor a) {
 
 void removeLife(Game g) {}
 
-void removeLife(Game g) {}
-
 bool checkIfIsTrapped(Game g, Actor a) {
 	int counter = 0;
 	int N_CELLS_TO_TRAP = 9;
@@ -1003,27 +1000,6 @@ void gameAnimation(Game g) {
 
     if(checkDeath(g, g->hero)) {
             commandDeath();
-<<<<<<< HEAD
-    }
-       
-        
-            
-   
-            
-
-        
-   
-        
-	
-
-
-    if(checkDeath(g, g->hero)) {
-            if(g->heroLifes <= 1)
-                commandDeath();
-            else
-                removeLife(g,g->hero);
-=======
->>>>>>> parent of 2f5238b... coisas na life
     }
        
         
