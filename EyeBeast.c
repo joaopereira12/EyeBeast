@@ -76,7 +76,7 @@ typedef char Line[MAX_LINE];
 typedef int Image;
 
 static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg, cherryImg;
-const char* randomScenarios[5]= { "KILL 1 ENEMY", "ADDED 1 MORE ENEMY","1 MORE LIFE", "ENEMIES FAST", "ENEMIES SLOW" };
+const char* randomScenarios[5]= { "-1 ENEMY", "+1 ENEMY","+1 <3", "+SPEED", "-SPEED" };
 
 /* XPM */
 static tyImage empty_xpm = {
@@ -461,7 +461,8 @@ typedef struct {
     int cherryTimeCatched;
     int heroLifes;
     int monsterSpeed;
-    int lastAction;
+    int lastActionTime;
+    
     
 } GameStruct, *Game;
 
@@ -542,30 +543,31 @@ Actor actorNew(Game g, ActorKind kind, int x, int y)
 }
 
 bool checkIfMoveIsPossible(Game g, int dx, int dy,int nx, int ny, int appendX, int appendY){
-     return !(!cellIsEmpty(g,nx+appendX,ny)  && dx > 0 && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER || g->world[nx + appendX][ny]->kind ==CHERRY  ) ||
+
+    /*const char* dayNames[] = {"EMPTY", "HERO", "CHASER","BLOCK","BOUNDARY" };
+    //TODO REMOVER ISTO QUANDO FOR PARA ENTREGAR, APENAS PARA TESTES
+/*if((!cellIsEmpty(g,nx+appendX,ny) && dx > 0 &&(g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ) )){
+        printf("dir %s\n",dayNames[g->world[nx + appendX][ny]->kind]);
+    }
+    if((!cellIsEmpty(g,nx-appendX,ny) && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ) )){
+        printf("esq %s\n",dayNames[g->world[nx - appendX][ny]->kind]);
+    }
+    if((!cellIsEmpty(g,nx,ny+appendY) && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER ) )){
+        printf("baixo %s\n",dayNames[g->world[nx][ny+appendY]->kind]);
+    }if((!cellIsEmpty(g,nx,ny-appendY) && dy < 0&&(g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER ) )){
+        printf("cima %s\n",dayNames[g->world[nx][ny-appendY]->kind]);
+    }/*
+    */
+
+
+    return !(!cellIsEmpty(g,nx+appendX,ny)  && dx > 0 && (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER || g->world[nx + appendX][ny]->kind ==CHERRY  ) ||
                !cellIsEmpty(g,nx-appendX,ny)  && dx < 0 &&(g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER || g->world[nx - appendX][ny]->kind ==CHERRY) ||
                !cellIsEmpty(g,nx,ny+appendY)  && dy > 0 && (g->world[nx][ny+appendY]->kind == BOUNDARY || g->world[nx][ny+appendY]->kind == CHASER || g->world[nx][ny+appendY]->kind ==CHERRY) ||
                !cellIsEmpty(g,nx,ny-appendY)  && dy < 0 && (g->world[nx][ny-appendY]->kind == BOUNDARY || g->world[nx][ny-appendY]->kind == CHASER || g->world[nx][ny-appendY]->kind ==CHERRY));
 }
 
-void cherryAnimation(Game g, Actor a) {
-    int whichWay = tyRand(2);
-    int nextX, nextY;
-    if(whichWay == 0)
-        nextX = a->x + tyRand(2);
-    else
-        nextX = a->x - tyRand(2);
-    whichWay = tyRand(2);
-    if(whichWay == 1)
-        nextY = a->y + tyRand(2);
-    else
-        nextY = a->y - tyRand(2);
 
-    if (cellIsEmpty(g, nextX, nextY)) {
-        actorMove(g, a, nextX, nextY);
 
-    }
-}
 
 /******************************************************************************
  * heroAnimation - The hero moves using the cursor keys
@@ -584,6 +586,7 @@ void heroAnimation(Game g, Actor a)
         if(g->world[nx][ny]->kind == CHERRY) {
             int n = tyRand(5);
             executeCherryOptions(g,n);
+            g->lastScenario = randomScenarios[n]; 
             printf("CHEERY: %s\n",randomScenarios[n]);
             g->cherryPlaced = false;
             g->cherryTimeCatched = tySeconds();
@@ -593,21 +596,24 @@ void heroAnimation(Game g, Actor a)
         if(g->world[nx][ny]->kind == BLOCK){
             int existsBlock = 1;
             while(existsBlock == 1){
-                if ((dx > 0 && !cellIsEmpty(g,nx+appendX,ny) && g->world[nx + appendX][ny]->kind == BLOCK) //direita
-                    || dx < 0 && !cellIsEmpty(g,nx-appendX,ny) && g->world[nx - appendX][ny]->kind == BLOCK)  //esquerda
+                if ((dx > 0 && !cellIsEmpty(g,nx+appendX,ny) && g->world[nx + appendX][ny]->kind == BLOCK ) //direita
+                    || dx < 0 && !cellIsEmpty(g,nx-appendX,ny) && g->world[nx - appendX][ny]->kind == BLOCK )  //esquerda
                     appendX = appendX +1;
-                else if((dy > 0 && !cellIsEmpty(g,nx,ny+appendY) && g->world[nx][ny+appendY]->kind == BLOCK) //cima
-                        || dy < 0 &&!cellIsEmpty(g,nx,ny-appendY) && g->world[nx][ny-appendY]->kind == BLOCK) //baixo
+                else if((dy > 0 && !cellIsEmpty(g,nx,ny+appendY) && g->world[nx][ny+appendY]->kind == BLOCK ) //cima
+                        || dy < 0 &&!cellIsEmpty(g,nx,ny-appendY) && g->world[nx][ny-appendY]->kind == BLOCK ) //baixo
                     appendY = appendY + 1;
                 else //none
                     existsBlock = 0;
             }
 
         }
-        if(checkIfMoveIsPossible(g,dx,dy,nx,ny,appendX,appendY)|| isCherry){
-            actorMove(g,g->world[nx][ny],dx > 0 ? nx+appendX : dx < 0 ? nx-appendX: nx, dy > 0 ? ny+appendY : dy < 0 ? ny-appendY: ny);
-            actorMove(g, a, nx, ny);
-        }
+   
+            if(checkIfMoveIsPossible(g,dx,dy,nx,ny,appendX,appendY) || isCherry) {
+                actorMove(g,g->world[nx][ny],dx > 0 ? nx+appendX : dx < 0 ? nx-appendX: nx, dy > 0 ? ny+appendY : dy < 0 ? ny-appendY: ny);
+        
+                actorMove(g, a, nx, ny);
+            }
+        
     }
 }
 
@@ -704,7 +710,7 @@ void executeCherryOptions(Game g, int n) {
       default:break;
   }
 
-  g->lastAction = tySeconds();
+  g->lastActionTime = tySeconds();
 }
 
 
@@ -726,9 +732,7 @@ void actorAnimation(Game g, Actor a)
 		case CHASER:
 			chaserAnimation(g,a);
 			break;
-        case CHERRY:
-            cherryAnimation(g,a);
-            break;
+        
 		default: break;
 	}
 }
@@ -856,7 +860,8 @@ Game gameInit(Game g)
     g->cherryPlaced=false;
     g->heroLifes = 1;
     g->monsterSpeed=10;
-    g->lastAction=0;
+    g->lastActionTime=0;
+    g->lastScenario = "";
     imagesCreate();
     gameClearWorld(g);
     gameInstallBoundaries(g);
@@ -971,7 +976,7 @@ void gameAnimation(Game g) {
 
   
     if(  g->monsterSpeed != 10) {
-        if(g->lastAction + 5 >= tySeconds()) {
+        if(g->lastActionTime + 5 >= tySeconds()) {
             
             if(g->monsterCounter%g->monsterSpeed==0) {
             for(int i = 0 ; i < numberOfMonsters ; i++)
@@ -989,9 +994,9 @@ void gameAnimation(Game g) {
              actorAnimation(g, g->monsters[i]);	
         }
         }
-    
+   
 
-    if(tySeconds()%5==0 && !g->cherryPlaced){
+    if((g->lastActionTime +5)< tySeconds() && !g->cherryPlaced){
         gameInstallCherry(g);
         g->cherryPlaced = true;
     }
@@ -1035,12 +1040,12 @@ void status(Game game)
 	String s,t,x;
 	sprintf(s, "TIME = %d seg.", tySeconds());
     sprintf(x, "SPEED = %d ", game->monsterSpeed);
-    sprintf(t,"%d LIFE",game->heroLifes);
+    sprintf(t,"%d <3",game->heroLifes);
 	tySetStatusText(4, s);
     tySetStatusText(0,t);
     tySetStatusText(2,x);
-    if(game->lastAction + 5 >= tySeconds())
-        tySetStatusText(1,"skrt");
+    if(game->lastActionTime + 6 >= tySeconds())
+        tySetStatusText(1,game->lastScenario);
     else 
         tySetStatusText(1,"");
     
