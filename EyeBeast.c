@@ -1,3 +1,4 @@
+
 /*
 max width = 80 columns
 tab = 4 spaces
@@ -5,32 +6,23 @@ tab = 4 spaces
 */
 
 /*	Linguagens e Ambientes de Programação - Projeto de 2021/2022
-
 	Eye Beast
-
 	Program written in C/C ++ over the wxWidget platform.
 	The wxWidget platform runs on Windows, MacOS and Linux.
-
 	This file is only a starting point fo your work. The entire file can
 	be changed, starting with this comment.
-
-
  AUTHORS IDENTIFICATION
     Student 1: 60180, João Pereira
     Student 2: 59213, Pedro Grilo
-
 Comments:
-
 ?????????????????????????
 ?????????????????????????
 ?????????????????????????
 ?????????????????????????
 ?????????????????????????
 ?????????????????????????
-
-
  Place here the names and numbers of the authors, plus some comments, as
- asked in the listing of the project. Do not deliver an anonymous file with
+ asked in the listing of the project. Do not deliver an anonymous file with
  unknown authors.
 */
 
@@ -84,7 +76,7 @@ typedef char Line[MAX_LINE];
 typedef int Image;
 
 static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg, cherryImg;
-const char* randomScenarios[4]= { "KILL 1 ENEMY", "ADDED 1 MORE ENEMY","1 MORE LIFE", "ENEMIES FAST", "ENEMIES SLOW" };
+const char* randomScenarios[5]= { "KILL 1 ENEMY", "ADDED 1 MORE ENEMY","1 MORE LIFE", "ENEMIES FAST", "ENEMIES SLOW" };
 
 /* XPM */
 static tyImage empty_xpm = {
@@ -700,13 +692,7 @@ void fasterMonsters(Game g) {
 
 bool slowerMonsters(Game g) {
      
-    // // tySetStatusText(1,"MONSTERS SLOWER");
- 
-    // // tySetStatusText(1,tySeconds());
-    // if(tySeconds() == g->cherryTimeCatched+7) {
-    //     printf("DONE");
-    //     g->monsterSpeed=10;}
-    //     else  g->monsterSpeed=20;
+
     g->monsterSpeed = 20;
    
 }
@@ -928,7 +914,7 @@ bool checkDeath(Game g,Actor a) {
 	
 }
 
-void removeLife(Game g) {}
+
 
 bool checkIfIsTrapped(Game g, Actor a) {
 	int counter = 0;
@@ -945,6 +931,17 @@ bool checkIfIsTrapped(Game g, Actor a) {
 	return false;
 
 	
+}
+
+void removeLife(Game g, Actor a) {
+    int x;
+    int y;
+    do {
+        x = tyRand(WORLD_SIZE_X - 2) + 1;
+        y = tyRand(WORLD_SIZE_Y - 2) + 1;
+    } while (!cellIsEmpty(g, x, y));
+    actorMove(g, a, x, y);
+    g->heroLifes--;
 }
 
 bool allTrapped(Game g) {
@@ -974,6 +971,8 @@ void commandWin(void)
 	tyQuit();
 }
 
+
+
 void gameAnimation(Game g) {
 
 	if(allTrapped(g))
@@ -983,8 +982,7 @@ void gameAnimation(Game g) {
     
 	actorAnimation(g, g->hero);
 
-    // if(g->cherry != NULL)
-    //     actorAnimation(g, g->cherry);
+  
     if(  g->monsterSpeed != 10) {
         if(g->lastAction + 5 >= tySeconds()) {
             
@@ -1006,13 +1004,16 @@ void gameAnimation(Game g) {
         }
     
 
-    if(tySeconds()%5==0 && !g->cherryPlaced){
+    if((g->lastAction +5)< tySeconds() && !g->cherryPlaced){
         gameInstallCherry(g);
         g->cherryPlaced = true;
     }
 
-    if(checkDeath(g, g->hero)) {
+     if (checkDeath(g, g->hero)) {
+        if (g->heroLifes <= 1)
             commandDeath();
+         else
+             removeLife(g, g->hero);
     }
        
         
@@ -1208,4 +1209,6 @@ void tyHandleStart(void)
 	tySetSpeed(5);
 	game = gameInit(game);
 }
+
+
 
