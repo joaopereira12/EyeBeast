@@ -627,25 +627,39 @@ bool chaserCanMove(Game g, int x, int y) {
     return cellIsEmpty(g,x,y) || heroInCell(x,y,g->hero);
 }
 
+int horizontalWay(Game g,Actor a) {
+    int heroX = g->hero->x;
+    int result = 0;
+    if(heroX < a->x)
+        result = -1;
+
+    if(heroX > a->x)
+        result = 1;
+   
+    return result;
+}
+
+int verticallWay(Game g,Actor a) {
+    int heroX = g->hero->y;
+    int result = 0;
+    if(heroX < a->y)
+        result = -1;
+
+    if(heroX > a->y)
+        result = 1;
+   
+    return result;
+}
+
 void chaserAnimation(Game g, Actor a) {
 		int xHero = g->hero->x;
     int yHero = g->hero->y;
 
-    int getDistance = tyDistance(xHero,yHero, a->x, a->y);
+    if(chaserCanMove(g,a->x + horizontalWay(g,a), a->y + verticallWay(g,a)))
+        actorMove(g,a,a->x + horizontalWay(g,a), a->y + verticallWay(g,a));
 
-    if(tyDistance(xHero, yHero, a->x, a->y+1) < getDistance && chaserCanMove(g,a->x,a->y+1)){
-        actorMove(g,a,a->x, a->y+1);
-    }else if(tyDistance(xHero, yHero, a->x+1, a->y) < getDistance && chaserCanMove(g,a->x+1,a->y)){
-        actorMove(g,a,a->x+1, a->y);
-    }else if(tyDistance(xHero, yHero, a->x+1, a->y+1) < getDistance && chaserCanMove(g,a->x+1,a->y+1)){
-        actorMove(g,a,a->x+1, a->y+1);
-    }else   if(tyDistance(xHero, yHero, a->x, a->y-1) < getDistance && chaserCanMove(g,a->x,a->y-1)){
-        actorMove(g,a,a->x, a->y-1);
-    }else if(tyDistance(xHero, yHero, a->x-1, a->y) < getDistance && chaserCanMove(g,a->x-1,a->y)){
-        actorMove(g,a,a->x-1, a->y);
-    }else if(tyDistance(xHero, yHero, a->x-1, a->y-1) < getDistance && chaserCanMove(g,a->x-1,a->y-1)) {
-        actorMove(g, a, a->x - 1, a->y - 1);
-    }else{
+    else{
+
         int randX = a->x+tyRand(2);
         int randY = a->y+tyRand(2);
         if(chaserCanMove(g,randX,randY) )
@@ -1037,17 +1051,17 @@ void gameAnimation(Game g) {
 
 void status(Game game)
 {
-	String s,t,x;
+	String s,t;
 	sprintf(s, "TIME = %d seg.", tySeconds());
-    sprintf(x, "SPEED = %d ", game->monsterSpeed);
+    
     sprintf(t,"%d <3",game->heroLifes);
 	tySetStatusText(4, s);
     tySetStatusText(0,t);
-    tySetStatusText(2,x);
+   
     if(game->lastActionTime + 6 >= tySeconds())
-        tySetStatusText(1,game->lastScenario);
+        tySetStatusText(2,game->lastScenario);
     else 
-        tySetStatusText(1,"");
+        tySetStatusText(2,"");
     
 }
 
