@@ -400,6 +400,7 @@ void imagesCreate(void) {
 #define ACTOR_PIXELS_X    16
 #define ACTOR_PIXELS_Y    16
 #define DEFAULT_N_MONSTERS    5
+#define MAX_N_MONSTERS    20
 #define MAX_OPTIONS_CHERRY 5
 #define DEFAULT_HERO_LIFES 1
 #define DEFAULT_MONSTER_SPEED 10
@@ -439,6 +440,7 @@ typedef struct {
     ActorKind kind;
     int x, y;
     Image image;
+    bool isPushable;
     union {
 // specific fields for each kind
         Hero hero;
@@ -452,12 +454,12 @@ typedef struct {
 #define WORLD_SIZE_X    31
 #define WORLD_SIZE_Y    18
 
-int numberOfMonsters = DEFAULT_N_MONSTERS;
 
 typedef struct {
     Actor world[WORLD_SIZE_X][WORLD_SIZE_Y];
     Actor hero;
-    Actor monsters[DEFAULT_N_MONSTERS];
+    int numberOfMonsters;
+    Actor monsters[MAX_N_MONSTERS];
     Actor cherry;
     char *lastScenario;
     int monsterCounter;
@@ -535,37 +537,33 @@ void actorMove(Game g, Actor a, int nx, int ny) {
 /******************************************************************************
  * actorNew - Creates a new actor and installs it in the matrix and the screen
  ******************************************************************************/
-Actor actorNew(Game g, ActorKind kind, int x, int y) {
+
+Actor actorNew(Game g, ActorKind kind, int x, int y, bool isPushable) {
     Actor a = malloc(sizeof(ActorStruct));
     a->kind = kind;
     a->x = x;
     a->y = y;
     a->image = actorImage(kind);
+    a->isPushable = isPushable;
     actorShow(g, a);
-
     return a;
 }
 
+
+
+
 bool checkIfMoveIsPossible(Game g, int dx, int dy, int nx, int ny, int appendX, int appendY) {
-    return !(!cellIsEmpty(g, nx + appendX, ny) && dx > 0 &&
-             (g->world[nx + appendX][ny]->kind == BOUNDARY || g->world[nx + appendX][ny]->kind == CHASER ||
-              g->world[nx + appendX][ny]->kind == CHERRY) ||
-             !cellIsEmpty(g, nx - appendX, ny) && dx < 0 &&
-             (g->world[nx - appendX][ny]->kind == BOUNDARY || g->world[nx - appendX][ny]->kind == CHASER ||
-              g->world[nx - appendX][ny]->kind == CHERRY) ||
-             !cellIsEmpty(g, nx, ny + appendY) && dy > 0 &&
-             (g->world[nx][ny + appendY]->kind == BOUNDARY || g->world[nx][ny + appendY]->kind == CHASER ||
-              g->world[nx][ny + appendY]->kind == CHERRY) ||
-             !cellIsEmpty(g, nx, ny - appendY) && dy < 0 &&
-             (g->world[nx][ny - appendY]->kind == BOUNDARY || g->world[nx][ny - appendY]->kind == CHASER ||
-              g->world[nx][ny - appendY]->kind == CHERRY));
+    return !(!cellIsEmpty(g, nx + appendX, ny) && dx > 0 && !g->world[nx + appendX][ny]->isPushable ||
+             !cellIsEmpty(g, nx - appendX, ny) && dx < 0 && (!g->world[nx - appendX][ny]->isPushable) ||
+             !cellIsEmpty(g, nx, ny + appendY) && dy > 0 && (!g->world[nx][ny + appendY]->isPushable ) ||
+             !cellIsEmpty(g, nx, ny - appendY) && dy < 0 &&(!g->world[nx][ny - appendY]->isPushable));
 }
 
 void killMonster(Game g) {
 
-    Actor toKill = g->monsters[numberOfMonsters - 1];
+    Actor toKill = g->monsters[(g->numberOfMonsters) - 1];
     actorHide(g, toKill);
-    g->monsters[--numberOfMonsters] = NULL;
+    g->monsters[--g->numberOfMonsters] = NULL;
 
 }
 
@@ -575,9 +573,8 @@ void addMonster(Game g) {
         x = tyRand(WORLD_SIZE_X - 2) + 1;
         y = tyRand(WORLD_SIZE_Y - 2) + 1;
     } while (!cellIsEmpty(g, x, y));
-    Actor newMonster = actorNew(g, CHASER, x, y);
-
-    g->monsters[numberOfMonsters++] = newMonster;
+    Actor newMonster = actorNew(g, CHASER, x, y, false);
+    g->monsters[g->numberOfMonsters++] = newMonster;
 
 }
 
@@ -585,17 +582,12 @@ void addOneLife(Game g) {
     g->heroLifes++;
 }
 
-void fasterMonsters(Game g) {
-
+void setMonstersFaster(Game g) {
     g->monsterSpeed = 5;
-
 }
 
-bool slowerMonsters(Game g) {
-
-
+void setMonstersSlow(Game g) {
     g->monsterSpeed = 20;
-
 }
 
 
@@ -611,10 +603,10 @@ void executeCherryOptions(Game g, int n) {
             addOneLife(g);
             break;
         case 3:
-            fasterMonsters(g);
+            setMonstersFaster(g);
             break;
         case 4:
-            slowerMonsters(g);
+            setMonstersSlow(g);
             break;
         default:
             break;
@@ -637,7 +629,7 @@ void heroAnimation(Game g, Actor a) {
         actorMove(g, a, nx, ny);
     } else {
         if (g->world[nx][ny]->kind == CHERRY) {
-            int n = tyRand(MAX_OPTIONS_CHERRY); //because tyRand(n-1);
+            int n = tyRand(MAX_OPTIONS_CHERRY);
             executeCherryOptions(g, n);
             g->lastScenario = randomScenarios[n];
             printf("CHEERY: %s\n", randomScenarios[n]);
@@ -695,7 +687,7 @@ int horizontalWay(Game g, Actor a) {
     return result;
 }
 
-int verticallWay(Game g, Actor a) {
+int verticalWay(Game g, Actor a) {
     int heroX = g->hero->y;
     int result = 0;
     if (heroX < a->y)
@@ -709,8 +701,8 @@ int verticallWay(Game g, Actor a) {
 
 void chaserAnimation(Game g, Actor a) {
 
-    if (chaserCanMove(g, a->x + horizontalWay(g, a), a->y + verticallWay(g, a)))
-        actorMove(g, a, a->x + horizontalWay(g, a), a->y + verticallWay(g, a));
+    if (chaserCanMove(g, a->x + horizontalWay(g, a), a->y + verticalWay(g, a)))
+        actorMove(g, a, a->x + horizontalWay(g, a), a->y + verticalWay(g, a));
 
     else {
 
@@ -767,14 +759,13 @@ void gameInstallBoundaries(Game g) {
         for (int x = 0; x < WORLD_SIZE_X; x++)
             if (x == 0 || x == WORLD_SIZE_X - 1
                 || y == 0 || y == WORLD_SIZE_Y - 1) {
-                actorNew(g, BOUNDARY, x, y);
+                actorNew(g, BOUNDARY, x, y,false);
             }
 }
 
 
 /******************************************************************************
  * gameInstallBlocks - Install the movable blocks
- * INCOMPLETE! -- ja ta completo
  ******************************************************************************/
 void gameInstallBlocks(Game g) {
     g->cherryTimeCatched = tySeconds();
@@ -784,7 +775,7 @@ void gameInstallBlocks(Game g) {
         int x = tyRand(WORLD_SIZE_X - 2) + 1;
         int y = tyRand(WORLD_SIZE_Y - 2) + 1;
         if (cellIsEmpty(g, x, y)) {
-            actorNew(g, BLOCK, x, y);
+            actorNew(g, BLOCK, x, y,true);
         } else
             max++;
         i++;
@@ -795,7 +786,6 @@ void gameInstallBlocks(Game g) {
 
 /******************************************************************************
  * gameInstallMonsters - Install the monsters
- * INCOMPLETE! ja ta completoz
  ******************************************************************************/
 void gameInstallMonsters(Game g) {
 
@@ -806,7 +796,7 @@ void gameInstallMonsters(Game g) {
         int x = tyRand(WORLD_SIZE_X - 2) + 1;
         int y = tyRand(WORLD_SIZE_Y - 2) + 1;
         if (cellIsEmpty(g, x, y)) {
-            g->monsters[countMonsters] = actorNew(g, CHASER, x, y);
+            g->monsters[countMonsters] = actorNew(g, CHASER, x, y,false);
             countMonsters++;
         } else
             max++;
@@ -821,7 +811,7 @@ void gameInstallCherry(Game g) {
         x = tyRand(WORLD_SIZE_X - 2) + 1;
         y = tyRand(WORLD_SIZE_Y - 2) + 1;
     } while (!cellIsEmpty(g, x, y));
-    g->cherry = actorNew(g, CHERRY, x, y);
+    g->cherry = actorNew(g, CHERRY, x, y,false);
     g->cherryPlaced = true;
 
 }
@@ -833,20 +823,18 @@ void gameInstallCherry(Game g) {
 void gameInstallHero(Game g) {
     int counterMonsters = 0;
     int x, y;
-    while (counterMonsters < numberOfMonsters) {
+    while (counterMonsters < g->numberOfMonsters) {
         counterMonsters = 0;
         x = tyRand(WORLD_SIZE_X - 2) + 1;
         y = tyRand(WORLD_SIZE_Y - 2) + 1;
         if (cellIsEmpty(g, x, y)) {
-            for (int i = 0; i < numberOfMonsters; i++) {
+            for (int i = 0; i < g->numberOfMonsters; i++) {
                 if (tyDistance(g->monsters[i]->x, g->monsters[i]->y, x, y) > 4)
                     counterMonsters++;
             }
         }
     }
-    g->hero = actorNew(g, HERO, x, y);
-
-
+    g->hero = actorNew(g, HERO, x, y,false);
 }
 
 
@@ -856,6 +844,7 @@ void gameInitVariables(Game g) {
     g->monsterSpeed = DEFAULT_MONSTER_SPEED;
     g->lastActionTime = 0;
     g->lastScenario = "";
+    g->numberOfMonsters = DEFAULT_N_MONSTERS;
 }
 
 /******************************************************************************
@@ -895,7 +884,7 @@ void gameRedraw(Game g) {
  * INCOMPLETE!
 ******************************************************************************/
 bool checkDeath(Game g, Actor a) {
-    for (int i = 0; i < numberOfMonsters; i++) {
+    for (int i = 0; i < g->numberOfMonsters; i++) {
         if (tyDistance(a->x, a->y, g->monsters[i]->x, g->monsters[i]->y) == 0)
             return true;
 
@@ -934,11 +923,11 @@ void removeLife(Game g, Actor a) {
 
 bool allTrapped(Game g) {
     int counter = 0;
-    for (int i = 0; i < numberOfMonsters; i++) {
+    for (int i = 0; i < g->numberOfMonsters; i++) {
         if (checkIfIsTrapped(g, g->monsters[i]))
             counter++;
     }
-    if (counter == numberOfMonsters)
+    if (counter == g->numberOfMonsters)
         return true;
     return false;
 }
@@ -971,7 +960,7 @@ void gameAnimation(Game g) {
         if (g->lastActionTime + 5 >= tySeconds()) {
 
             if (g->monsterCounter % g->monsterSpeed == 0) {
-                for (int i = 0; i < numberOfMonsters; i++)
+                for (int i = 0; i < g->numberOfMonsters; i++)
                     actorAnimation(g, g->monsters[i]);
             }
         } else
@@ -981,7 +970,7 @@ void gameAnimation(Game g) {
 
 
         if (g->monsterCounter % g->monsterSpeed == 0) {
-            for (int i = 0; i < numberOfMonsters; i++)
+            for (int i = 0; i < g->numberOfMonsters; i++)
                 actorAnimation(g, g->monsters[i]);
         }
     }
