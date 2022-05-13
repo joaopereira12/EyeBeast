@@ -985,6 +985,7 @@ void monsterSpeedAnimation(Game g) {
     }
 }
 
+}
 
 /******************************************************************************
  * gameAnimation - Sends animation events to all the animated actors
