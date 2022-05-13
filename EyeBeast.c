@@ -924,7 +924,6 @@ bool checkIfIsTrapped(Game g, Actor a) {
 
 /******************************************************************************
  * removeLife - Method to remove 1 life from hero
- * in 9 around cells
  ******************************************************************************/
 void removeLife(Game g, Actor a) {
     int coord[2];
@@ -985,7 +984,6 @@ void monsterSpeedAnimation(Game g) {
     }
 }
 
-}
 
 /******************************************************************************
  * gameAnimation - Sends animation events to all the animated actors
