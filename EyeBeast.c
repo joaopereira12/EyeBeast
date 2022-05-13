@@ -271,7 +271,7 @@ void imagesCreate(void) {
 #define DEFAULT_HERO_LIFES 1
 #define DEFAULT_MONSTER_SPEED 10
 #define NUMBER_MAX_BLOCKS 110;
-#define COOLDOWN_CHERRY 5
+#define COOLDOWN_CHERRY 6
 #define FASTER_VELOCITY 5
 #define SLOW_VELOCITY 20
 
@@ -332,7 +332,8 @@ typedef struct {
     char *lastRandomEvent;
     int monsterCounter;
     bool cherryPlaced;
-    int cherryTimeCatched;
+    int cherryTimePlaced;
+    int cherryTimeHide;
     int lastActionTime;
 
 } GameStruct, *Game;
@@ -500,6 +501,7 @@ void executeCherryOptions(Game g, int n) {
             break;
     }
 
+    g->cherryTimeHide = tySeconds();
     g->lastActionTime = tySeconds();
 }
 
@@ -521,7 +523,6 @@ void heroAnimation(Game g, Actor a) {
             g->lastRandomEvent = randomRandomEvents[n];
             printf("CHEERY: %s\n", randomRandomEvents[n]);
             g->cherryPlaced = false;
-            g->cherryTimeCatched = tySeconds();
             g->cherry = NULL;
             isCherry = true;
         }
@@ -630,6 +631,7 @@ void actorAnimation(Game g, Actor a) {
         default:
             break;
     }
+   
 }
 
 /******************************************************************************/
@@ -664,7 +666,6 @@ void gameInstallBoundaries(Game g) {
  * gameInstallBlocks - Install the movable blocks
  ******************************************************************************/
 void gameInstallBlocks(Game g) {
-    g->cherryTimeCatched = tySeconds();
     int i = 0;
     int max = NUMBER_MAX_BLOCKS
     while (i < max) {
@@ -723,6 +724,8 @@ void gameInitVariables(Game g) {
     g->lastActionTime = 0;
     g->lastRandomEvent = "";
     g->numberOfMonsters = 0;
+    g->cherryTimePlaced = 0;
+    g->cherryTimeHide = 0;
 }
 
 /******************************************************************************
@@ -863,10 +866,18 @@ void gameAnimation(Game g) {
     actorAnimation(g, g->hero);
     monsterSpeedAnimation(g);
 
-    if ((g->lastActionTime + COOLDOWN_CHERRY) < tySeconds() && !g->cherryPlaced) {
+    if ((g->cherryTimeHide + COOLDOWN_CHERRY  < tySeconds()) && !g->cherryPlaced) {
         gameInstallCherry(g);
         g->cherryPlaced = true;
+        g->cherryTimePlaced = tySeconds();
     }
+
+    if(g->cherryTimePlaced + COOLDOWN_CHERRY < tySeconds() && g->cherryPlaced) {
+        actorHide(g,g->cherry);
+        g->cherryPlaced = false;
+        g->cherryTimeHide = tySeconds();
+    }
+
 
     if (checkDeath(g, g->hero)) {
         if (g->hero->u.hero.heroLifes <= DEFAULT_HERO_LIFES)
