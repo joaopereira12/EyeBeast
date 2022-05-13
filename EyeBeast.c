@@ -468,6 +468,7 @@ typedef struct {
     bool cherryPlaced;
     int cherryTimePlaced;
     int cherryTimeHide;
+    int lastActionTime;
 
 } GameStruct, *Game;
 
@@ -635,6 +636,7 @@ void executeCherryOptions(Game g, int n) {
     }
 
     g->cherryTimeHide = tySeconds();
+    g->lastActionTime = tySeconds();
 }
 
 /******************************************************************************
@@ -763,6 +765,7 @@ void actorAnimation(Game g, Actor a) {
         default:
             break;
     }
+   
 }
 
 /******************************************************************************/
@@ -852,7 +855,7 @@ void gameInstallHero(Game g) {
  ******************************************************************************/
 void gameInitVariables(Game g) {
     g->cherryPlaced = false;
-    
+    g->lastActionTime = 0;
     g->lastRandomEvent = "";
     g->numberOfMonsters = 0;
     g->cherryTimePlaced = 0;
@@ -969,7 +972,7 @@ void commandWin(void) {
  ******************************************************************************/
 void monsterSpeedAnimation(Game g) {
     if (g->monsters[0]->u.chaser.monsterSpeed != DEFAULT_MONSTER_SPEED) {
-        if (g->cherryTimeHide + COOLDOWN_CHERRY >= tySeconds()) {
+        if (g->lastActionTime + COOLDOWN_CHERRY >= tySeconds()) {
             if (g->monsterCounter % g->monsters[0]->u.chaser.monsterSpeed == 0) {
                 for (int i = 0; i < g->numberOfMonsters; i++)
                     actorAnimation(g, g->monsters[i]);
@@ -1040,7 +1043,7 @@ void status(Game game) {
     tySetStatusText(4, s);
     tySetStatusText(0, t);
 
-    if (game->cherryTimeHide + COOLDOWN_CHERRY >= tySeconds())
+    if (game->lastActionTime + COOLDOWN_CHERRY >= tySeconds())
         tySetStatusText(2, game->lastRandomEvent);
     else
         tySetStatusText(2, "");
