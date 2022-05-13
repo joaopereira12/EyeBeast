@@ -17,21 +17,22 @@ tab = 4 spaces
 Comments:
 ******************************************************************************
 Extra functionalities:
-    - Added a mystery box with random options when hero catch the box.
+Extra functionalities:
+    - When the hero catches the mystery box it spawns random features.
         - Options:
-            - Add a new Monster in the game
+            - Add a new Monster to the game
             - Remove a monster from the game
-            - Add new point of life
-            - Change speed of monsters to faster (+Speed)
-            - Change speed of monsters to slow (-Speed)
+            - The player gains a point of life
+            - Increase the monsters' speed (+Speed)
+            - Decreases the monsters' speed (-Speed)
 
     - How mystery box works?
-        - Mystery box appears of 6 in 6 seconds;
-        - If hero don't catch the mystery box in 6 seconds, she disappeared and
-        spawn again in the next 6 seconds;
-        - If hero catch her, 1 of the random options written above will be triggered.
-            - When option is triggered, it is running for 6 seconds, and then,
-            a new Mystery Box is appeared.
+        - A Mystery box appears every 6 seconds;
+        - If the hero doesn't catch it in 6 seconds, it disappears and
+        spawns again after another 6 seconds;
+        - If the hero catches it, one of the random features written above will be triggered.
+            - When the feature is triggered, it is executed for 6 seconds, and then,
+            a new Mystery Box appears.
 ******************************************************************************
 
  Place here the names and numbers of the authors, plus some comments, as
