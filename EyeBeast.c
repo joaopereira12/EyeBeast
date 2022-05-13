@@ -551,7 +551,9 @@ Actor actorNew(Game g, ActorKind kind, int x, int y, bool isPushable) {
 
 
 
-
+/******************************************************************************
+ * checkIfMoveIsPossible - Check if actor is pushable or not
+ *******************************************************************************/
 bool checkIfMoveIsPossible(Game g, int dx, int dy, int nx, int ny, int appendX, int appendY) {
     return !(!cellIsEmpty(g, nx + appendX, ny) && dx > 0 && !g->world[nx + appendX][ny]->isPushable ||
              !cellIsEmpty(g, nx - appendX, ny) && dx < 0 && (!g->world[nx - appendX][ny]->isPushable) ||
@@ -559,14 +561,21 @@ bool checkIfMoveIsPossible(Game g, int dx, int dy, int nx, int ny, int appendX, 
              !cellIsEmpty(g, nx, ny - appendY) && dy < 0 &&(!g->world[nx][ny - appendY]->isPushable));
 }
 
+/******************************************************************************
+ * killMonster - Method created to kill monsters and remove
+ * from array of monsters
+ * EXTRA FUNCTIONALITY
+ *******************************************************************************/
 void killMonster(Game g) {
-
     Actor toKill = g->monsters[(g->numberOfMonsters) - 1];
     actorHide(g, toKill);
     g->monsters[--g->numberOfMonsters] = NULL;
-
 }
 
+/******************************************************************************
+ * addMonster - Method created to add monsters in random cell
+ * EXTRA FUNCTIONALITY
+ *******************************************************************************/
 void addMonster(Game g) {
     int x, y;
     do {
@@ -578,19 +587,34 @@ void addMonster(Game g) {
 
 }
 
+/******************************************************************************
+ * addOneLife - Method created to add 1 heart to hero life
+ * EXTRA FUNCTIONALITY
+ *******************************************************************************/
 void addOneLife(Game g) {
     g->heroLifes++;
 }
 
+/******************************************************************************
+ * setMonstersFaster - Method created to setSpeed to 5 (faster);
+ * EXTRA FUNCTIONALITY
+ *******************************************************************************/
 void setMonstersFaster(Game g) {
     g->monsterSpeed = 5;
 }
 
+/******************************************************************************
+ * setMonstersSlow - Method created to setSpeed to 20 (slowly);
+ * EXTRA FUNCTIONALITY
+ *******************************************************************************/
 void setMonstersSlow(Game g) {
     g->monsterSpeed = 20;
 }
 
-
+/******************************************************************************
+ * executeCherryOptions - Method used to call different option when hero catch the cherry
+ * EXTRA FUNCTIONALITY
+ *******************************************************************************/
 void executeCherryOptions(Game g, int n) {
     switch (n) {
         case 0:
@@ -617,7 +641,6 @@ void executeCherryOptions(Game g, int n) {
 
 /******************************************************************************
  * heroAnimation - The hero moves using the cursor keys
- * INCOMPLETE!
  ******************************************************************************/
 void heroAnimation(Game g, Actor a) {
     int dx = tyKeyDeltaX(), dy = tyKeyDeltaY();
@@ -665,16 +688,25 @@ void heroAnimation(Game g, Actor a) {
     }
 }
 
+/******************************************************************************
+ * heroInCell - Check if hero is in cell with x and y
+ ******************************************************************************/
 bool heroInCell(int x, int y, Actor a) {
     if ((y == a->y) && x == a->x)
         return true;
     return false;
 }
 
+/******************************************************************************
+ * chaserCanMove - Check if hero can move it
+ ******************************************************************************/
 bool chaserCanMove(Game g, int x, int y) {
     return cellIsEmpty(g, x, y) || heroInCell(x, y, g->hero);
 }
 
+/******************************************************************************
+ * horizontalWay - Assistant method to move monsters horizontally
+ ******************************************************************************/
 int horizontalWay(Game g, Actor a) {
     int heroX = g->hero->x;
     int result = 0;
@@ -687,6 +719,9 @@ int horizontalWay(Game g, Actor a) {
     return result;
 }
 
+/******************************************************************************
+ * verticalWay - Assistant method to move monsters verticalWay
+ ******************************************************************************/
 int verticalWay(Game g, Actor a) {
     int heroX = g->hero->y;
     int result = 0;
@@ -699,6 +734,9 @@ int verticalWay(Game g, Actor a) {
     return result;
 }
 
+/******************************************************************************
+ * chaserAnimation - Method to move monsters to catch the player
+ ******************************************************************************/
 void chaserAnimation(Game g, Actor a) {
 
     if (chaserCanMove(g, a->x + horizontalWay(g, a), a->y + verticalWay(g, a)))
@@ -716,10 +754,7 @@ void chaserAnimation(Game g, Actor a) {
 
 /******************************************************************************
  * actorAnimation - The actor behaves according to its kind
- * INCOMPLETE!
  ******************************************************************************/
-
-
 void actorAnimation(Game g, Actor a) {
     switch (a->kind) {
         case HERO:
@@ -780,30 +815,21 @@ void gameInstallBlocks(Game g) {
             max++;
         i++;
     }
-
-
 }
 
 /******************************************************************************
  * gameInstallMonsters - Install the monsters
  ******************************************************************************/
 void gameInstallMonsters(Game g) {
-
     int i = 0;
-    int max = DEFAULT_N_MONSTERS;
-    int countMonsters = 0;
-    while (i < max) {
-        int x = tyRand(WORLD_SIZE_X - 2) + 1;
-        int y = tyRand(WORLD_SIZE_Y - 2) + 1;
-        if (cellIsEmpty(g, x, y)) {
-            g->monsters[countMonsters] = actorNew(g, CHASER, x, y,false);
-            countMonsters++;
-        } else
-            max++;
+    while (i < DEFAULT_N_MONSTERS) {
+        addMonster(g);
         i++;
     }
 }
-
+/******************************************************************************
+ * gameInstallCherry - To install cherrys in empty cell
+ ******************************************************************************/
 void gameInstallCherry(Game g) {
     int x;
     int y;
@@ -813,12 +839,10 @@ void gameInstallCherry(Game g) {
     } while (!cellIsEmpty(g, x, y));
     g->cherry = actorNew(g, CHERRY, x, y,false);
     g->cherryPlaced = true;
-
 }
 
 /******************************************************************************
  * gameInstallHero - Install the hero
- * INCOMPLETE! This code is to change  ja ta completo
  ******************************************************************************/
 void gameInstallHero(Game g) {
     int counterMonsters = 0;
@@ -837,14 +861,16 @@ void gameInstallHero(Game g) {
     g->hero = actorNew(g, HERO, x, y,false);
 }
 
-
+/******************************************************************************
+ * gameInitVariables - To init variables
+ ******************************************************************************/
 void gameInitVariables(Game g) {
     g->cherryPlaced = false;
     g->heroLifes = DEFAULT_HERO_LIFES;
     g->monsterSpeed = DEFAULT_MONSTER_SPEED;
     g->lastActionTime = 0;
     g->lastScenario = "";
-    g->numberOfMonsters = DEFAULT_N_MONSTERS;
+    g->numberOfMonsters = 0;
 }
 
 /******************************************************************************
@@ -878,23 +904,23 @@ void gameRedraw(Game g) {
         }
 }
 
+
 /******************************************************************************
- * gameAnimation - Sends animation events to all the animated actors
- * This function is called every tenth of a second (more or less...)
- * INCOMPLETE!
-******************************************************************************/
+ * checkDeath - Method to check if someone monster belongs to hero cell,
+ * if its true,hero dead, else, alive!
+ ******************************************************************************/
 bool checkDeath(Game g, Actor a) {
     for (int i = 0; i < g->numberOfMonsters; i++) {
         if (tyDistance(a->x, a->y, g->monsters[i]->x, g->monsters[i]->y) == 0)
             return true;
-
-
     }
     return false;
-
 }
 
-
+/******************************************************************************
+ * checkIfIsTrapped - Method to check if someone monsters are trapped
+ * in 9 around cells
+ ******************************************************************************/
 bool checkIfIsTrapped(Game g, Actor a) {
     int counter = 0;
     int N_CELLS_TO_TRAP = 9;
@@ -910,6 +936,11 @@ bool checkIfIsTrapped(Game g, Actor a) {
     return false;
 }
 
+
+/******************************************************************************
+ * checkIfIsTrapped - Method to check if someone monsters are trapped
+ * in 9 around cells
+ ******************************************************************************/
 void removeLife(Game g, Actor a) {
     int x;
     int y;
@@ -920,6 +951,10 @@ void removeLife(Game g, Actor a) {
     actorMove(g, a, x, y);
     g->heroLifes--;
 }
+
+/******************************************************************************
+ * allTrapped - Check if all monsters are trapped
+ ******************************************************************************/
 
 bool allTrapped(Game g) {
     int counter = 0;
@@ -933,12 +968,8 @@ bool allTrapped(Game g) {
 }
 
 void commandDeath() {
-
-
     tyAlertDialog("You lose!", "Dead Meat!!");
     tyQuit();
-
-
 }
 
 
@@ -947,34 +978,38 @@ void commandWin(void) {
     tyQuit();
 }
 
-
-void gameAnimation(Game g) {
-
-    if (allTrapped(g))
-        commandWin();
-
-    actorAnimation(g, g->hero);
-
-
+/******************************************************************************
+ * monsterSpeedAnimation - Method used to control speed animation of monsters
+ ******************************************************************************/
+void monsterSpeedAnimation(Game g){
     if (g->monsterSpeed != DEFAULT_MONSTER_SPEED) {
         if (g->lastActionTime + 5 >= tySeconds()) {
-
             if (g->monsterCounter % g->monsterSpeed == 0) {
                 for (int i = 0; i < g->numberOfMonsters; i++)
                     actorAnimation(g, g->monsters[i]);
             }
         } else
             g->monsterSpeed = DEFAULT_MONSTER_SPEED;
-
     } else {
-
-
         if (g->monsterCounter % g->monsterSpeed == 0) {
-            for (int i = 0; i < g->numberOfMonsters; i++)
                 actorAnimation(g, g->monsters[i]);
         }
     }
 
+}
+
+
+/******************************************************************************
+ * gameAnimation - Sends animation events to all the animated actors
+ * This function is called every tenth of a second (more or less...)
+******************************************************************************/
+void gameAnimation(Game g) {
+
+    if (allTrapped(g))
+        commandWin();
+
+    actorAnimation(g, g->hero);
+    monsterSpeedAnimation(g);
 
     if ((g->lastActionTime + COOLDOWN_CHERRY) < tySeconds() && !g->cherryPlaced) {
         gameInstallCherry(g);
