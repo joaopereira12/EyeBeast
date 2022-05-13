@@ -75,7 +75,7 @@ typedef char Line[MAX_LINE];
 
 typedef int Image;
 
-static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg, cherryImg;
+static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg, mysteryBoxImg;
 
 
 /* XPM */
@@ -170,12 +170,12 @@ static tyImage block_xpm = {
         "..+.+.+.+.+.+.+.",
         "................"};
 
-static tyImage cherry_xpm = {
-        "16 16 4 1",
-        " 	c None",
-        ".	c #000000",
-        "+	c #FFFFFF",
-        "@	c #FFE400",
+static tyImage mysteryBox_xpm = {
+             "16 16 4 1",
+        "     c None",
+        ".    c #000000",
+        "+    c #FFFFFF",
+        "@    c #FFE400",
         "................",
         ".+.@@@@@@@@@@.+.",
         "...@........@...",
@@ -248,7 +248,7 @@ void imagesCreate(void) {
     chaserImg = tyCreateImage(chaser_xpm);
     blockImg = tyCreateImage(block_xpm);
     boundaryImg = tyCreateImage(boundary_xpm);
-    cherryImg = tyCreateImage(cherry_xpm);
+    mysteryBoxImg = tyCreateImage(mysteryBox_xpm);
     invalidImg = tyCreateImage(invalid_xpm);
 }
 
@@ -267,18 +267,20 @@ void imagesCreate(void) {
 #define ACTOR_PIXELS_Y    16
 #define DEFAULT_N_MONSTERS    5
 #define MAX_N_MONSTERS    20
-#define MAX_OPTIONS_CHERRY 5
+#define MAX_OPTIONS_MYSTERY_BOX 5
 #define DEFAULT_HERO_LIFES 1
 #define DEFAULT_MONSTER_SPEED 10
 #define NUMBER_MAX_BLOCKS 110;
-#define COOLDOWN_CHERRY 6
+#define COOLDOWN_MYSTERY_BOX 6
 #define FASTER_VELOCITY 5
 #define SLOW_VELOCITY 20
 
-const char *randomRandomEvents[MAX_OPTIONS_CHERRY] = {"-1 ENEMY", "+1 ENEMY", "+1 ♥", "+SPEED", "-SPEED"};
+#define MAX_MONSTERS_EXCEDED "MAXIMUM"
+
+const char *randomRandomEvents[MAX_OPTIONS_MYSTERY_BOX] = {"-1 ENEMY", "+1 ENEMY", "+1 ♥", "+SPEED", "-SPEED"};
 
 typedef enum {
-    EMPTY, HERO, CHASER, BLOCK, BOUNDARY, CHERRY
+    EMPTY, HERO, CHASER, BLOCK, BOUNDARY, MYSTERY_BOX  
 } ActorKind;
 
 
@@ -301,7 +303,7 @@ typedef struct {
 } Boundary;
 typedef struct {
 // specific fields can go here, but probably none will be needed
-} Cherry;
+} MysteryBox;
 
 typedef struct {
 // factored common fields
@@ -315,7 +317,7 @@ typedef struct {
         Chaser chaser;
         Block block;
         Boundary boundary;
-        Cherry cherry;
+        MysteryBox mysteryBox;
     } u;
 } ActorStruct, *Actor;
 
@@ -327,13 +329,13 @@ typedef struct {
     Actor world[WORLD_SIZE_X][WORLD_SIZE_Y];
     Actor hero;
     Actor monsters[MAX_N_MONSTERS];
-    Actor cherry;
+    Actor mysteryBox;
     int numberOfMonsters;
     char *lastRandomEvent;
     int monsterCounter;
-    bool cherryPlaced;
-    int cherryTimePlaced;
-    int cherryTimeHide;
+    bool mysteryBoxPlaced;
+    int mysteryBoxTimePlaced;
+    int mysteryBoxTimeHide;
     int lastActionTime;
 
 } GameStruct, *Game;
@@ -353,8 +355,8 @@ Image actorImage(ActorKind kind) {
             return blockImg;
         case BOUNDARY:
             return boundaryImg;
-        case CHERRY:
-            return cherryImg;
+        case MYSTERY_BOX:
+            return mysteryBoxImg;
         default:
             return invalidImg;
     }
@@ -440,7 +442,7 @@ bool checkIfMoveIsPossible(Game g, int dx, int dy, int nx, int ny, int appendX, 
 void killMonster(Game g) {
     Actor toKill = g->monsters[(g->numberOfMonsters) - 1];
     actorHide(g, toKill);
-    g->monsters[--g->numberOfMonsters] = NULL;
+    g->monsters[g->numberOfMonsters--] = NULL;
 }
 
 /******************************************************************************
@@ -448,11 +450,13 @@ void killMonster(Game g) {
  * EXTRA FUNCTIONALITY
  *******************************************************************************/
 void addMonster(Game g) {
-    int coord[2];
-    generateCoordinates(g, coord, true);
-    Actor newMonster = actorNew(g, CHASER, coord[0], coord[1], false);
-    g->monsters[g->numberOfMonsters] = newMonster;
-    g->monsters[g->numberOfMonsters++]->u.chaser.monsterSpeed = DEFAULT_MONSTER_SPEED;
+    if(g->numberOfMonsters +1  <= MAX_N_MONSTERS){
+        int coord[2];
+        generateCoordinates(g, coord, true);
+        Actor newMonster = actorNew(g, CHASER, coord[0], coord[1], false);
+        g->monsters[g->numberOfMonsters] = newMonster;
+        g->monsters[g->numberOfMonsters++]->u.chaser.monsterSpeed = DEFAULT_MONSTER_SPEED;
+    }
 
 
 }
@@ -477,10 +481,10 @@ void setMonstersVelocity(Game g, int velocity) {
 
 
 /******************************************************************************
- * executeCherryOptions - Method used to call different option when hero catch the cherry
+ * executeMysteryBoxOptions - Method used to call different option when hero catch the mysteryBox
  * EXTRA FUNCTIONALITY
  *******************************************************************************/
-void executeCherryOptions(Game g, int n) {
+void executeMysteryBoxOptions(Game g, int n) {
     switch (n) {
         case 0:
             killMonster(g);
@@ -501,7 +505,7 @@ void executeCherryOptions(Game g, int n) {
             break;
     }
 
-    g->cherryTimeHide = tySeconds();
+    g->mysteryBoxTimeHide = tySeconds();
     g->lastActionTime = tySeconds();
 }
 
@@ -513,18 +517,18 @@ void heroAnimation(Game g, Actor a) {
 
     int nx = a->x + dx, ny = a->y + dy;
     int appendX = 0, appendY = 0;
-    bool isCherry = false;
+    bool isMysteryBox = false;
     if (cellIsEmpty(g, nx, ny)) {
         actorMove(g, a, nx, ny);
     } else {
-        if (g->world[nx][ny]->kind == CHERRY) {
-            int n = tyRand(MAX_OPTIONS_CHERRY);
-            executeCherryOptions(g, n);
+        if (g->world[nx][ny]->kind == MYSTERY_BOX) {
+            int n = tyRand(MAX_OPTIONS_MYSTERY_BOX);
+            executeMysteryBoxOptions(g, n);
             g->lastRandomEvent = randomRandomEvents[n];
             printf("CHEERY: %s\n", randomRandomEvents[n]);
-            g->cherryPlaced = false;
-            g->cherry = NULL;
-            isCherry = true;
+            g->mysteryBoxPlaced = false;
+            g->mysteryBox = NULL;
+            isMysteryBox = true;
         }
         if (g->world[nx][ny]->kind == BLOCK) {
             int existsBlock = 1;
@@ -544,7 +548,7 @@ void heroAnimation(Game g, Actor a) {
 
         }
 
-        if (checkIfMoveIsPossible(g, dx, dy, nx, ny, appendX, appendY) || isCherry) {
+        if (checkIfMoveIsPossible(g, dx, dy, nx, ny, appendX, appendY) || isMysteryBox) {
             actorMove(g, g->world[nx][ny], dx > 0 ? nx + appendX : dx < 0 ? nx - appendX : nx,
                       dy > 0 ? ny + appendY : dy < 0 ? ny - appendY : ny);
             actorMove(g, a, nx, ny);
@@ -688,13 +692,13 @@ void gameInstallMonsters(Game g) {
 }
 
 /******************************************************************************
- * gameInstallCherry - To install cherry's in empty cell
+ * gameInstallMysteryBox - To install mysteryBox's in empty cell
  ******************************************************************************/
-void gameInstallCherry(Game g) {
+void gameInstallMysteryBox(Game g) {
     int coord[2];
     generateCoordinates(g, coord, true);
-    g->cherry = actorNew(g, CHERRY, coord[0], coord[1], false);
-    g->cherryPlaced = true;
+    g->mysteryBox = actorNew(g, MYSTERY_BOX, coord[0], coord[1], false);
+    g->mysteryBoxPlaced = true;
 }
 
 /******************************************************************************
@@ -720,12 +724,12 @@ void gameInstallHero(Game g) {
  * gameInitVariables - To init variables
  ******************************************************************************/
 void gameInitVariables(Game g) {
-    g->cherryPlaced = false;
+    g->mysteryBoxPlaced = false;
     g->lastActionTime = 0;
     g->lastRandomEvent = "";
     g->numberOfMonsters = 0;
-    g->cherryTimePlaced = 0;
-    g->cherryTimeHide = 0;
+    g->mysteryBoxTimePlaced = 0;
+    g->mysteryBoxTimeHide = 0;
 }
 
 /******************************************************************************
@@ -734,7 +738,6 @@ void gameInitVariables(Game g) {
 Game gameInit(Game g) {
     if (g == NULL)
         g = malloc(sizeof(GameStruct));
-
     gameInitVariables(g);
     imagesCreate();
     gameClearWorld(g);
@@ -838,7 +841,7 @@ void commandWin(void) {
  ******************************************************************************/
 void monsterSpeedAnimation(Game g) {
     if (g->monsters[0]->u.chaser.monsterSpeed != DEFAULT_MONSTER_SPEED) {
-        if (g->lastActionTime + COOLDOWN_CHERRY >= tySeconds()) {
+        if (g->lastActionTime + COOLDOWN_MYSTERY_BOX >= tySeconds()) {
             if (g->monsterCounter % g->monsters[0]->u.chaser.monsterSpeed == 0) {
                 for (int i = 0; i < g->numberOfMonsters; i++)
                     actorAnimation(g, g->monsters[i]);
@@ -866,16 +869,16 @@ void gameAnimation(Game g) {
     actorAnimation(g, g->hero);
     monsterSpeedAnimation(g);
 
-    if ((g->cherryTimeHide + COOLDOWN_CHERRY  < tySeconds()) && !g->cherryPlaced) {
-        gameInstallCherry(g);
-        g->cherryPlaced = true;
-        g->cherryTimePlaced = tySeconds();
+    if ((g->mysteryBoxTimeHide + COOLDOWN_MYSTERY_BOX  < tySeconds()) && !g->mysteryBoxPlaced) {
+        gameInstallMysteryBox(g);
+        g->mysteryBoxPlaced = true;
+        g->mysteryBoxTimePlaced = tySeconds();
     }
 
-    if(g->cherryTimePlaced + COOLDOWN_CHERRY < tySeconds() && g->cherryPlaced) {
-        actorHide(g,g->cherry);
-        g->cherryPlaced = false;
-        g->cherryTimeHide = tySeconds();
+    if(g->mysteryBoxTimePlaced + COOLDOWN_MYSTERY_BOX < tySeconds() && g->mysteryBoxPlaced) {
+        actorHide(g,g->mysteryBox);
+        g->mysteryBoxPlaced = false;
+        g->mysteryBoxTimeHide = tySeconds();
     }
 
 
@@ -909,8 +912,11 @@ void status(Game game) {
     tySetStatusText(4, s);
     tySetStatusText(0, t);
 
-    if (game->lastActionTime + COOLDOWN_CHERRY >= tySeconds())
-        tySetStatusText(2, game->lastRandomEvent);
+    if (game->lastActionTime + COOLDOWN_MYSTERY_BOX >= tySeconds())
+        if(game->lastRandomEvent == "+1 ENEMY" && game->numberOfMonsters == MAX_N_MONSTERS) 
+            tySetStatusText(2,MAX_MONSTERS_EXCEDED );
+        else
+            tySetStatusText(2, game->lastRandomEvent);
     else
         tySetStatusText(2, "");
 
