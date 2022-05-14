@@ -91,6 +91,9 @@ EyeBeast0: $(OBJ_DIR) $(OBJS) $(OBJ_DIR)/wxTiny0.o
 	$(CPP) $(CFLAGS) -o EyeBeast0 $(OBJ_DIR)/EyeBeast.o $(OBJ_DIR)/wxTiny0.o $(ZLIBS)
 
 
+OLA:
+	$(CPP) $(CFLAGS) -o ola.exe $(OBJS) $(ZLIBS)
+
 ##############################################################################
 # Utilities
 ##############################################################################

@@ -30,10 +30,11 @@ Extra functionalities:
         - A Mystery box appears every 6 seconds;
         - If the hero doesn't catch it in 6 seconds, it disappears and
         spawns again after another 6 seconds;
-        - If the hero catches it, one of the random features written above will be triggered.
-            - When the feature is triggered, it is executed for 6 seconds, and then,
-            a new Mystery Box appears.
-******************************************************************************
+        - If the hero catches it, one of the random features written above will
+        be triggered.
+            - When the feature is triggered, it is executed for 6 seconds,
+            and then,a new Mystery Box appears.
+*******************************************************************************
 
  Place here the names and numbers of the authors, plus some comments, as
  asked in the listing of the project. Do not deliver an anonymous file with
@@ -89,7 +90,8 @@ typedef char Line[MAX_LINE];
 
 typedef int Image;
 
-static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg, mysteryBoxImg;
+static Image emptyImg, heroImg, chaserImg, blockImg, boundaryImg, invalidImg,
+                mysteryBoxImg;
 
 
 /* XPM */
@@ -185,7 +187,7 @@ static tyImage block_xpm = {
         "................"};
 
 static tyImage mysteryBox_xpm = {
-             "16 16 4 1",
+        "16 16 4 1",
         "     c None",
         ".    c #000000",
         "+    c #FFFFFF",
@@ -291,10 +293,12 @@ void imagesCreate(void) {
 
 #define MAX_MONSTERS_EXCEDED "MAXIMUM"
 
-const char *randomRandomEvents[MAX_OPTIONS_MYSTERY_BOX] = {"-1 ENEMY", "+1 ENEMY", "+1 ♥", "+SPEED", "-SPEED"};
+const char *randomRandomEvents[MAX_OPTIONS_MYSTERY_BOX] = {"-1 ENEMY",
+                                                           "+1 ENEMY", "+1 ♥",
+                                                           "+SPEED", "-SPEED"};
 
 typedef enum {
-    EMPTY, HERO, CHASER, BLOCK, BOUNDARY, MYSTERY_BOX  
+    EMPTY, HERO, CHASER, BLOCK, BOUNDARY, MYSTERY_BOX
 } ActorKind;
 
 
@@ -441,11 +445,16 @@ void generateCoordinates(Game g, int *coordinates, bool empty) {
 /******************************************************************************
  * checkIfMoveIsPossible - Check if actor is pushable or not
  *******************************************************************************/
-bool checkIfMoveIsPossible(Game g, int dx, int dy, int nx, int ny, int appendX, int appendY) {
-    return !(!cellIsEmpty(g, nx + appendX, ny) && dx > 0 && !g->world[nx + appendX][ny]->isPushable ||
-             !cellIsEmpty(g, nx - appendX, ny) && dx < 0 && (!g->world[nx - appendX][ny]->isPushable) ||
-             !cellIsEmpty(g, nx, ny + appendY) && dy > 0 && (!g->world[nx][ny + appendY]->isPushable) ||
-             !cellIsEmpty(g, nx, ny - appendY) && dy < 0 && (!g->world[nx][ny - appendY]->isPushable));
+bool checkIfMoveIsPossible(Game g, int dx, int dy, int nx, int ny, int appendX,
+                           int appendY) {
+    return !(!cellIsEmpty(g, nx + appendX, ny) && dx > 0 &&
+             !g->world[nx + appendX][ny]->isPushable ||
+             !cellIsEmpty(g, nx - appendX, ny) && dx < 0 &&
+             (!g->world[nx - appendX][ny]->isPushable) ||
+             !cellIsEmpty(g, nx, ny + appendY) && dy > 0 &&
+             (!g->world[nx][ny + appendY]->isPushable) ||
+             !cellIsEmpty(g, nx, ny - appendY) && dy < 0 &&
+             (!g->world[nx][ny - appendY]->isPushable));
 }
 
 /******************************************************************************
@@ -464,10 +473,11 @@ void killMonster(Game g) {
  * EXTRA FUNCTIONALITY
  *******************************************************************************/
 void addMonster(Game g) {
-    if(g->numberOfMonsters +1  <= MAX_N_MONSTERS){
+    if (g->numberOfMonsters + 1 <= MAX_N_MONSTERS) {
         int coord[2];
         generateCoordinates(g, coord, true);
-        Actor newMonster = actorNew(g, CHASER, coord[0], coord[1], false);
+        Actor newMonster = actorNew(g, CHASER, coord[0], coord[1],
+                                    false);
         g->monsters[g->numberOfMonsters] = newMonster;
         g->monsters[g->numberOfMonsters++]->u.chaser.monsterSpeed = DEFAULT_MONSTER_SPEED;
     }
@@ -547,7 +557,8 @@ void heroAnimation(Game g, Actor a) {
         if (g->world[nx][ny]->kind == BLOCK) {
             int existsBlock = 1;
             while (existsBlock == 1) {
-                if ((dx > 0 && !cellIsEmpty(g, nx + appendX, ny) && g->world[nx + appendX][ny]->kind == BLOCK) //direita
+                if ((dx > 0 && !cellIsEmpty(g, nx + appendX, ny) &&
+                     g->world[nx + appendX][ny]->kind == BLOCK) //direita
                     || dx < 0 && !cellIsEmpty(g, nx - appendX, ny) &&
                        g->world[nx - appendX][ny]->kind == BLOCK)  //esquerda
                     appendX = appendX + 1;
@@ -562,8 +573,10 @@ void heroAnimation(Game g, Actor a) {
 
         }
 
-        if (checkIfMoveIsPossible(g, dx, dy, nx, ny, appendX, appendY) || isMysteryBox) {
-            actorMove(g, g->world[nx][ny], dx > 0 ? nx + appendX : dx < 0 ? nx - appendX : nx,
+        if (checkIfMoveIsPossible(g, dx, dy, nx, ny, appendX, appendY) ||
+            isMysteryBox) {
+            actorMove(g, g->world[nx][ny],
+                      dx > 0 ? nx + appendX : dx < 0 ? nx - appendX : nx,
                       dy > 0 ? ny + appendY : dy < 0 ? ny - appendY : ny);
             actorMove(g, a, nx, ny);
         }
@@ -622,8 +635,11 @@ int verticalWay(Game g, Actor a) {
  ******************************************************************************/
 void chaserAnimation(Game g, Actor a) {
 
-    if (chaserCanMove(g, a->x + horizontalWay(g, a), a->y + verticalWay(g, a)))
-        actorMove(g, a, a->x + horizontalWay(g, a), a->y + verticalWay(g, a));
+    if (chaserCanMove(g, a->x + horizontalWay(g, a),
+                         a->y + verticalWay(g, a)))
+
+        actorMove(g, a, a->x + horizontalWay(g, a),
+                        a->y + verticalWay(g, a));
 
     else {
         int randX = a->x + tyRand(2);
@@ -649,7 +665,7 @@ void actorAnimation(Game g, Actor a) {
         default:
             break;
     }
-   
+
 }
 
 /******************************************************************************/
@@ -711,7 +727,8 @@ void gameInstallMonsters(Game g) {
 void gameInstallMysteryBox(Game g) {
     int coord[2];
     generateCoordinates(g, coord, true);
-    g->mysteryBox = actorNew(g, MYSTERY_BOX, coord[0], coord[1], false);
+    g->mysteryBox = actorNew(g, MYSTERY_BOX, coord[0], coord[1],
+                             false);
     g->mysteryBoxPlaced = true;
 }
 
@@ -725,7 +742,8 @@ void gameInstallHero(Game g) {
         counterMonsters = 0;
         generateCoordinates(g, coord, true);
         for (int i = 0; i < g->numberOfMonsters; i++) {
-            if (tyDistance(g->monsters[i]->x, g->monsters[i]->y, coord[0], coord[1]) > 4)
+            if (tyDistance(g->monsters[i]->x, g->monsters[i]->y, coord[0],
+                           coord[1]) > 4)
                 counterMonsters++;
         }
     }
@@ -856,7 +874,8 @@ void commandWin(void) {
 void monsterSpeedAnimation(Game g) {
     if (g->monsters[0]->u.chaser.monsterSpeed != DEFAULT_MONSTER_SPEED) {
         if (g->lastActionTime + COOLDOWN_MYSTERY_BOX >= tySeconds()) {
-            if (g->monsterCounter % g->monsters[0]->u.chaser.monsterSpeed == 0) {
+            if (g->monsterCounter % g->monsters[0]->u.chaser.monsterSpeed ==
+                0) {
                 for (int i = 0; i < g->numberOfMonsters; i++)
                     actorAnimation(g, g->monsters[i]);
             }
@@ -883,14 +902,16 @@ void gameAnimation(Game g) {
     actorAnimation(g, g->hero);
     monsterSpeedAnimation(g);
 
-    if ((g->mysteryBoxTimeHide + COOLDOWN_MYSTERY_BOX  < tySeconds()) && !g->mysteryBoxPlaced) {
+    if ((g->mysteryBoxTimeHide + COOLDOWN_MYSTERY_BOX < tySeconds()) &&
+        !g->mysteryBoxPlaced) {
         gameInstallMysteryBox(g);
         g->mysteryBoxPlaced = true;
         g->mysteryBoxTimePlaced = tySeconds();
     }
 
-    if(g->mysteryBoxTimePlaced + COOLDOWN_MYSTERY_BOX < tySeconds() && g->mysteryBoxPlaced) {
-        actorHide(g,g->mysteryBox);
+    if (g->mysteryBoxTimePlaced + COOLDOWN_MYSTERY_BOX < tySeconds() &&
+        g->mysteryBoxPlaced) {
+        actorHide(g, g->mysteryBox);
         g->mysteryBoxPlaced = false;
         g->mysteryBoxTimeHide = tySeconds();
     }
@@ -927,8 +948,9 @@ void status(Game game) {
     tySetStatusText(0, t);
 
     if (game->lastActionTime + COOLDOWN_MYSTERY_BOX >= tySeconds())
-        if(game->lastRandomEvent == "+1 ENEMY" && game->numberOfMonsters == MAX_N_MONSTERS) 
-            tySetStatusText(2,MAX_MONSTERS_EXCEDED );
+        if (game->lastRandomEvent == "+1 ENEMY" &&
+            game->numberOfMonsters == MAX_N_MONSTERS)
+            tySetStatusText(2, MAX_MONSTERS_EXCEDED);
         else
             tySetStatusText(2, game->lastRandomEvent);
     else
